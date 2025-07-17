@@ -28,9 +28,11 @@ const questionSchema = new mongoose.Schema({
 		type: {
 			type: String,
 			enum: ['image', 'audio', 'video'],
+			default: 'image',
 		},
 		url: {
 			type: String,
+			default: '',
 		},
 	}
 }, {

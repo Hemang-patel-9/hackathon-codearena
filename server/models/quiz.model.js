@@ -59,7 +59,8 @@ const quizSchema = new mongoose.Schema({
 	},
 	duration: {
 		type: Number,
-		default: null
+		default: 60, // Default duration in minutes
+		required: true,
 	},
 	participants: [
 		{

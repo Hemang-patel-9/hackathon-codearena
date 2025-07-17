@@ -11,6 +11,8 @@ import LoginPage from "./pages/Login"
 import ProfilePage from "./pages/Profile"
 import OtpPage from "./pages/otpVarificationPage"
 import GitHubSuccess from "./pages/GithubSuccess"
+import { HeroSection } from "./pages/Home"
+import { CreateQuizPage } from "./components/create-quiz/create-quiz-page"
 
 export default function App() {
   return (
@@ -22,7 +24,9 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/dashboard" />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/home" element={<HeroSection />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/quiz-creation" element={<CreateQuizPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/otp" element={<OtpPage />} />

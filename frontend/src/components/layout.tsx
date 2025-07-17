@@ -8,6 +8,7 @@ import Navbar from "./navbar"
 import Sidebar from "./sidebar"
 import { useLocation } from "react-router-dom"
 import { useAuth } from "@/contexts/authContext";
+import { Footer } from "./Footer"
 interface LayoutProps {
 	children: React.ReactNode
 }
@@ -85,6 +86,7 @@ export default function Layout({ children }: LayoutProps) {
 								{children}
 							</motion.div>
 						</div>
+						<Footer />
 					</div>
 				</main>
 			</div>

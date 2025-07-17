@@ -35,9 +35,9 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 						navigate("/");
 					}}>
 						<div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-							<span className="text-primary-foreground font-bold text-sm">CM</span>
+							<span className="text-primary-foreground font-bold text-sm">XQ</span>
 						</div>
-						<span className="font-bold text-xl hidden sm:block">Construction</span>
+						<span className="font-bold text-xl hidden sm:block">XQuizz</span>
 					</motion.div>
 				</div>
 
