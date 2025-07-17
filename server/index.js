@@ -5,6 +5,12 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const path = require("path");
 
+// Import routes
+const badgeRoutes = require('./routes/badge.router');
+const questionRoutes = require('./routes/question.router');
+const scoreRoutes = require('./routes/score.router');
+const quizRoutes = require('./routes/quiz.router')
+
 require("./lib/connection")();
 const app = express();
 
@@ -23,6 +29,11 @@ fs.readdirSync(routesPath).forEach((file) => {
 		app.use(routePath, route);
 	}
 });
+
+app.use('/api/badges', badgeRoutes);
+app.use('/api/questions', questionRoutes);
+app.use('./api/quizzes',quizRoutes)
+app.use('/api/scoreboards', scoreRoutes);
 
 // Root route
 app.get("/", (req, res) => {

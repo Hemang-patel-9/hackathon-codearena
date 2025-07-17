@@ -301,6 +301,36 @@ const updateProfile = async (req, res) => {
 	}
 };
 
+// @route   GET /api/users/search?q=<query_text>
+const searchUsers = async (req, res) => {
+    try {
+        const queryText = req.query.q;
+
+        if (!queryText || queryText.trim() === '') {
+            return res.status(400).json({ success: false, message: 'Search query parameter "q" is required.' });
+        }
+
+        const searchRegex = new RegExp(queryText, 'i');
+
+        const users = await User.find({
+            $or: [
+                { username: { $regex: searchRegex } },
+                { email: { $regex: searchRegex } }
+            ]
+        }).select('username _id');
+
+        if (users.length === 0) {
+            return res.status(404).json({ success: true, message: 'No users found matching your query.', data: [] });
+        }
+
+        res.status(200).json({ success: true, count: users.length, data: users });
+
+    } catch (error) {
+        console.error('Error searching users:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
 
 module.exports = {
 	register,
@@ -310,5 +340,6 @@ module.exports = {
 	updateUser,
 	deleteUser,
 	updatePassword,
-	updateProfile
+	updateProfile,
+	searchUsers
 }
