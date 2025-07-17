@@ -152,3 +152,24 @@ export async function verifyOtp(
 		throw error;
 	}
 }
+
+export async function searchUsersByQuery(
+	query: string,
+	token: string
+): Promise<Result> {
+	try {
+		const response = await fetch(`${API_BASE_URL}/user/search?q=${encodeURIComponent(query)}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		const result: Result = await response.json();
+		return result;
+	} catch (error) {
+		console.error("Search users API error:", error);
+		throw error;
+	}
+}

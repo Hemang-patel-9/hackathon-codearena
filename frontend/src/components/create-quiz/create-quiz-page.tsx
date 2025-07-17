@@ -9,52 +9,41 @@ import { QuizPreview } from "./quiz-preview"
 import { ProgressIndicator } from "./progress-indicator"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight, Save, Eye } from 'lucide-react'
+import type { QuizData } from "@/types/quiz"
+import { createQuiz } from "@/api/quiz"
+import { useAuth } from "@/contexts/authContext"
+import type { Result } from "@/types/response"
+import { toast } from "@/hooks/use-toast"
+import { useNavigate } from "react-router-dom"
+import { uploadMedia, deleteMedia } from "@/api/media";
 
-export interface QuizData {
-	title: string
-	description: string
-	NoOfQuestion: number
-	thumbnail: string
-	duration: number
-	participants: [string] | []
-	passingCriteria: number
-	tags: string[]
-	timePerQuestion: number
-	questionOrder: "random" | "fixed"
-	visibility: "public" | "private" | "password-protected"
-	password: string
-	schedule: Date
-	questions: QuestionData[]
-}
-
-export interface QuestionData {
-	questionText: string
-	questionType: "multiple-choice" | "multiple-select" | "true-false" | "open-ended"
-	options: { text: string; isCorrect: boolean }[]
-	multimedia?: { type: "image" | "audio" | "video"; url: string }
-}
-
-const initialQuizData: QuizData = {
-	title: "",
-	description: "",
-	duration: 60,
-	NoOfQuestion: 10,
-	participants: [],
-	thumbnail: "",
-	tags: [],
-	timePerQuestion: 30,
-	passingCriteria: 70,
-	questionOrder: "random",
-	visibility: "public",
-	password: "",
-	schedule: new Date(),
-	questions: [],
-}
+//uploadMedia takes file:File and token:string and returns a Promise<Result>
+//deleteMedia takes mediaId:string(file-name only) and token:string and returns a Promise<Result>
 
 export function CreateQuizPage() {
+	const { user, token } = useAuth();
+	const initialQuizData: QuizData = {
+		creator: user?._id as string,
+		title: "",
+		description: "",
+		duration: 60,
+		NoOfQuestion: 10,
+		participants: [],
+		thumbnail: "",
+		tags: [],
+		timePerQuestion: 30,
+		passingCriteria: 70,
+		questionOrder: "random",
+		visibility: "public",
+		password: "",
+		schedule: new Date(),
+		questions: [],
+	}
 	const [currentStep, setCurrentStep] = useState(0)
-	const [quizData, setQuizData] = useState<QuizData>(initialQuizData)
 	const [showPreview, setShowPreview] = useState(false)
+	const [quizData, setQuizData] = useState<QuizData>(initialQuizData)
+	const navigate = useNavigate();
+
 
 	const steps = [
 		{ title: "Basic Info", component: QuizBasicInfo },
@@ -80,10 +69,32 @@ export function CreateQuizPage() {
 
 	const handleSave = async () => {
 		// Here you would typically send the data to your API
-		console.log("Saving quiz:", quizData)
-		// Simulate API call
-		await new Promise((resolve) => setTimeout(resolve, 1000))
-		alert("Quiz saved successfully!")
+		if (!token || !user) {
+			toast({
+				title: "Authentication Error",
+				description: "You need to be logged in to create a quiz.",
+				variant: "destructive",
+			});
+			return
+		}
+		const result: Result = await createQuiz(quizData, token as string)
+
+		if (result.error) {
+			toast({
+				title: "Error",
+				description: result.error,
+				variant: "destructive",
+			});
+			return
+		}
+		else {
+			toast({
+				title: "Success",
+				description: "Quiz created successfully!",
+				variant: "default",
+			});
+			// navigate("/dashboard");
+		}
 	}
 
 	const CurrentStepComponent = steps[currentStep].component

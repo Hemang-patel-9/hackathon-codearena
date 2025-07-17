@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, HelpCircle } from "lucide-react"
-import type { QuizData, QuestionData } from "./create-quiz-page"
+import type { QuizData } from "@/types/quiz"
+import type { QuestionData } from "@/types/question"
 import { QuestionCard } from "./question-card"
 import { QuestionTypeSelector } from "./question-type-selector"
 
@@ -34,27 +35,26 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 							{ text: "", isCorrect: false },
 						],
 		}
-
 		updateQuizData({ questions: [...quizData.questions, newQuestion] })
 		setShowTypeSelector(false)
 	}
 
-	const updateQuestion = (questionText: string, updates: Partial<QuestionData>) => {
-		const updatedQuestions = quizData.questions.map((q) => (q.questionText === questionText ? { ...q, ...updates } : q))
+	const updateQuestion = (index: number, updates: Partial<QuestionData>) => {
+		const updatedQuestions = [...quizData.questions]
+		updatedQuestions[index] = { ...updatedQuestions[index], ...updates }
 		updateQuizData({ questions: updatedQuestions })
 	}
 
-	const deleteQuestion = (questionText: string) => {
-		const updatedQuestions = quizData.questions.filter((q) => q.questionText !== questionText)
+	const deleteQuestion = (index: number) => {
+		const updatedQuestions = quizData.questions.filter((_, i) => i !== index)
 		updateQuizData({ questions: updatedQuestions })
 	}
 
-	const duplicateQuestion = (questionText: string) => {
-		const questionToDuplicate = quizData.questions.find((q) => q.questionText === questionText)
+	const duplicateQuestion = (index: number) => {
+		const questionToDuplicate = quizData.questions[index]
 		if (questionToDuplicate) {
-			const duplicatedQuestion = {
+			const duplicatedQuestion: QuestionData = {
 				...questionToDuplicate,
-				id: Date.now().toString(),
 				questionText: `${questionToDuplicate.questionText} (Copy)`,
 			}
 			updateQuizData({ questions: [...quizData.questions, duplicatedQuestion] })
@@ -96,7 +96,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 			<AnimatePresence>
 				{quizData.questions.map((question, index) => (
 					<motion.div
-						key={question.questionText}
+						key={index}
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -20 }}
@@ -105,9 +105,9 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 						<QuestionCard
 							question={question}
 							index={index}
-							onUpdate={(updates) => updateQuestion(question.questionText, updates)}
-							onDelete={() => deleteQuestion(question.questionText)}
-							onDuplicate={() => duplicateQuestion(question.questionText)}
+							onUpdate={(updates) => updateQuestion(index, updates)}
+							onDelete={() => deleteQuestion(index)}
+							onDuplicate={() => duplicateQuestion(index)}
 						/>
 					</motion.div>
 				))}

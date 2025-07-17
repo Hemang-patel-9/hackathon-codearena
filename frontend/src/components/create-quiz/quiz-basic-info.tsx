@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { X, Tag, ImageIcon } from 'lucide-react'
-import type { QuizData } from "./create-quiz-page"
+import type { QuizData } from "@/types/quiz"
 import { useState } from "react"
 
 interface QuizBasicInfoProps {

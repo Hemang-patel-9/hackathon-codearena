@@ -317,7 +317,7 @@ const searchUsers = async (req, res) => {
                 { username: { $regex: searchRegex } },
                 { email: { $regex: searchRegex } }
             ]
-        }).select('username _id');
+        }).select('username _id email avatar');
 
         if (users.length === 0) {
             return res.status(404).json({ success: true, message: 'No users found matching your query.', data: [] });

@@ -11,12 +11,16 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Shield, Shuffle, Target, Lock, Users, Search, X, UserPlus, AlertCircle } from "lucide-react"
-import type { QuizData } from "./create-quiz-page"
+import type { QuizData } from "@/types/quiz"
+import type { Result } from "@/types/response"
+import { useAuth } from "@/contexts/authContext"
+import { searchUsersByQuery } from "@/api/user"
 
 interface User {
 	_id: string
-	name: string
+	username: string
 	email: string
+	avatar: string
 }
 
 interface QuizSettingsProps {
@@ -29,6 +33,8 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 	const [searchQuery, setSearchQuery] = useState("")
 	const [searchResults, setSearchResults] = useState<User[]>([])
 	const [isSearching, setIsSearching] = useState(false)
+	const { token } = useAuth();
+	const [participantsUsernames, setParticipantsUsernames] = useState<string[]>([])
 
 	// Mock search function - replace with actual API call
 	const searchUsers = async (query: string) => {
@@ -40,27 +46,18 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 		setIsSearching(true)
 
 		// Simulate API call
-		setTimeout(() => {
-			const mockUsers: User[] = [
-				{ _id: "1", name: "John Doe", email: "john@example.com" },
-				{ _id: "2", name: "Jane Smith", email: "jane@example.com" },
-				{ _id: "3", name: "Bob Johnson", email: "bob@example.com" },
-			].filter(
-				(user) =>
-					user.name.toLowerCase().includes(query.toLowerCase()) ||
-					user.email.toLowerCase().includes(query.toLowerCase()),
-			)
-
-			setSearchResults(mockUsers)
-			setIsSearching(false)
-		}, 500)
+		const users: Result = await searchUsersByQuery(query, token as string);
+		setIsSearching(false)
+		setSearchResults(users.data || []);
+		//in user i will get [{_id,email,username,avatar}]
 	}
 
-	const addParticipant = (userId: string) => {
+	const addParticipant = (userId: string, username: string) => {
 		if (!quizData.participants.includes(userId)) {
 			updateQuizData({
 				participants: [...quizData.participants, userId],
-			})
+			});
+			setParticipantsUsernames((prev) => [...prev, username]);
 		}
 		setSearchQuery("")
 		setSearchResults([])
@@ -70,16 +67,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 		updateQuizData({
 			participants: quizData.participants.filter((id) => id !== userId),
 		})
-	}
-
-	// Get user name by ID (mock function - replace with actual lookup)
-	const getUserName = (userId: string) => {
-		const mockUsers = {
-			"1": "John Doe",
-			"2": "Jane Smith",
-			"3": "Bob Johnson",
-		}
-		return mockUsers[userId as keyof typeof mockUsers] || `User ${userId}`
+		// setParticipantsUsernames((prev) => prev.filter((name) => name !== getUserName(userId)));
 	}
 
 	// Validation function
@@ -160,7 +148,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 
 					<motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
 						<Label htmlFor="NoOfQuestion" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-							Number of Questions <span className="text-red-500">*</span>
+							Number of Questions (will display to students) <span className="text-red-500">*</span>
 						</Label>
 						<Input
 							id="NoOfQuestion"
@@ -444,11 +432,18 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 															animate={{ opacity: 1, y: 0 }}
 															exit={{ opacity: 0, y: -10 }}
 															className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-															onClick={() => addParticipant(user._id)}
+															onClick={() => addParticipant(user._id, user.username)}
 														>
-															<div>
-																<p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
-																<p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+															<div className="flex items-center gap-3">
+																<img
+																	src={`${import.meta.env.VITE_APP_API_URL}/${user.avatar}`}
+																	alt={user.username}
+																	className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+																/>
+																<div>
+																	<p className="font-medium text-gray-900 dark:text-white">{user.username}</p>
+																	<p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+																</div>
 															</div>
 															{quizData.participants.includes(user._id) && <Badge variant="secondary">Added</Badge>}
 														</motion.div>
@@ -472,17 +467,20 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 
 							{quizData.participants.length > 0 && (
 								<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-wrap gap-2">
-									{quizData.participants.map((participantId) => (
+									{participantsUsernames.map((username, idx) => (
 										<motion.div
-											key={participantId}
+											key={quizData.participants[idx]}
 											initial={{ scale: 0 }}
 											animate={{ scale: 1 }}
 											exit={{ scale: 0 }}
 											className="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-sm"
 										>
-											<span>{getUserName(participantId)}</span>
+											<span>{username}</span>
 											<button
-												onClick={() => removeParticipant(participantId)}
+												onClick={() => {
+													removeParticipant(quizData.participants[idx]);
+													setParticipantsUsernames((prev) => prev.filter((_, i) => i !== idx));
+												}}
 												className="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-1 transition-colors"
 											>
 												<X className="w-3 h-3" />

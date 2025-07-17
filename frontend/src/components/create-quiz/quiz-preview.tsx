@@ -5,8 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { X, Clock, Users, Target, Eye, Calendar, Tag, ShieldQuestionIcon, Timer } from "lucide-react"
-import type { QuizData } from "./create-quiz-page"
-
+import type { QuizData } from "@/types/quiz"
 interface QuizPreviewProps {
 	quizData: QuizData
 	onClose: () => void
@@ -26,7 +25,7 @@ export function QuizPreview({ quizData, onClose }: QuizPreviewProps) {
 				animate={{ scale: 1, opacity: 1 }}
 				exit={{ scale: 0.9, opacity: 0 }}
 				onClick={(e) => e.stopPropagation()}
-				className="w-full max-w-4xl max-h-[90vh] overflow-hidden"
+				className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
 			>
 				<Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
 					<CardHeader className="border-b border-gray-200 dark:border-gray-700">

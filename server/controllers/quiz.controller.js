@@ -1,11 +1,11 @@
 // controllers/quizController.js
 const Quiz = require('../models/quiz.model');
-const Question = require('../models/question.model'); 
-const User = require('../models/user.model'); 
 const bcrypt = require('bcryptjs');
+const Question = require('../models/question.model');
+const mongoose = require('mongoose');
 
 // @route   POST /api/quizzes
-exports.createQuiz = async (req, res) => {
+const createQuiz = async (req, res) => {
     try {
         let {
             creator,
@@ -27,27 +27,21 @@ exports.createQuiz = async (req, res) => {
         } = req.body;
 
         if (!title || !creator) {
-            return res.status(400).json({ success: false, message: 'Title and creator are required.' });
+            return res.status(400).json({ error: "Data is missing", data: null, message: 'Title and creator are required.' });
         }
 
         if (!mongoose.Types.ObjectId.isValid(creator)) {
-            return res.status(400).json({ success: false, message: 'Invalid creator ID format.' });
+            return res.status(400).json({ error: "Invalid creator ID format.", data: null, message: 'Invalid creator ID format.' });
         }
-        
-        if (questions && questions.length > 0) {
-            const invalidQuestionIds = questions.filter(id => !mongoose.Types.ObjectId.isValid(id));
-            if (invalidQuestionIds.length > 0) {
-                return res.status(400).json({ success: false, message: 'One or more provided question IDs are invalid.' });
-            }
 
-            NoOfQuestion = questions.length;
-        } else if (questions && questions.length === 0) {
-             NoOfQuestion = 0;
+        if (questions && questions.length > 0) {
+            const insertedQuestions = await Question.insertMany(questions);
+            questions = insertedQuestions.map(q => q._id);
         }
 
         if (visibility === 'password-protected') {
             if (!password) {
-                return res.status(400).json({ success: false, message: 'Password is required for password-protected quizzes.' });
+                return res.status(400).json({ error: "Password is required for password-protected quizzes.", data: null, message: 'Password is required for password-protected quizzes.' });
             }
             const salt = await bcrypt.genSalt(10);
             password = await bcrypt.hash(password, salt);
@@ -90,7 +84,7 @@ exports.createQuiz = async (req, res) => {
 };
 
 // @route   GET /api/quizzes
-exports.getAllQuizzes = async (req, res) => {
+const getAllQuizzes = async (req, res) => {
     try {
         const quizzes = await Quiz.find({})
             .populate('creator', 'username email')
@@ -104,7 +98,7 @@ exports.getAllQuizzes = async (req, res) => {
 };
 
 // @route   GET /api/quizzes/:id
-exports.getQuizById = async (req, res) => {
+const getQuizById = async (req, res) => {
     try {
         const quizId = req.params.id;
         const providedPassword = req.body.password || req.query.password;
@@ -143,7 +137,7 @@ exports.getQuizById = async (req, res) => {
 };
 
 // @route   PUT /api/quizzes/:id
-exports.updateQuiz = async (req, res) => {
+const updateQuiz = async (req, res) => {
     try {
         const quizId = req.params.id;
         let {
@@ -175,7 +169,7 @@ exports.updateQuiz = async (req, res) => {
                 const salt = await bcrypt.genSalt(10);
                 quiz.password = await bcrypt.hash(password, salt);
             } else if (!quiz.password) {
-                 return res.status(400).json({ success: false, message: 'Password is required when changing visibility to password-protected.' });
+                return res.status(400).json({ success: false, message: 'Password is required when changing visibility to password-protected.' });
             }
         } else if (quiz.visibility === 'password-protected' && visibility !== 'password-protected') {
             quiz.password = undefined;
@@ -231,7 +225,7 @@ exports.updateQuiz = async (req, res) => {
 };
 
 // @route   DELETE /api/quizzes/:id
-exports.deleteQuiz = async (req, res) => {
+const deleteQuiz = async (req, res) => {
     try {
         const deletedQuiz = await Quiz.findByIdAndDelete(req.params.id);
 
@@ -248,3 +242,11 @@ exports.deleteQuiz = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
+
+module.exports = {
+    createQuiz,
+    getAllQuizzes,
+    getQuizById,
+    updateQuiz,
+    deleteQuiz
+}

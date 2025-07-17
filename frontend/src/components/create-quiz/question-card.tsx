@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Trash2, Copy, Plus, X, CheckSquare, Square, ToggleLeft, FileText, ImageIcon, Video, Music } from "lucide-react"
-import type { QuestionData } from "./create-quiz-page"
+import type { QuestionData } from "@/types/question"
 
 interface QuestionCardProps {
 	question: QuestionData
