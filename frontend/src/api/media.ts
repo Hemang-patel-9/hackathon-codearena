@@ -7,7 +7,7 @@ export async function uploadMedia(file: File, token: string): Promise<Result> {
 	try {
 		const formData = new FormData();
 		formData.append("file", file);
-
+		console.log('Uploading media with token:', token);
 		const response = await fetch(`${API_BASE_URL}/media/upload`, {
 			method: "POST",
 			headers: {

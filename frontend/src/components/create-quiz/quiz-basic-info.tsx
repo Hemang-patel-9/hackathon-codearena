@@ -7,9 +7,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { X, Tag, ImageIcon } from 'lucide-react'
+import { X, Tag } from 'lucide-react'
 import type { QuizData } from "@/types/quiz"
 import { useState } from "react"
+import { useAuth } from "@/contexts/authContext"
+import { toast } from "@/hooks/use-toast"
+import type { Result } from "@/types/response"
+import { deleteMedia, uploadMedia } from "@/api/media"
+import ThumbnailUpload from "./Thumbnail"
 
 interface QuizBasicInfoProps {
 	quizData: QuizData
@@ -18,6 +23,8 @@ interface QuizBasicInfoProps {
 
 export function QuizBasicInfo({ quizData, updateQuizData }: QuizBasicInfoProps) {
 	const [newTag, setNewTag] = useState("")
+	const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+	const { token } = useAuth();
 
 	const addTag = () => {
 		if (newTag.trim() && !quizData.tags.includes(newTag.trim())) {
@@ -36,6 +43,96 @@ export function QuizBasicInfo({ quizData, updateQuizData }: QuizBasicInfoProps) 
 			addTag()
 		}
 	}
+
+	const handleThumbnailUpload = async (file: File) => {
+		if (!token) {
+			toast({
+				title: "Authentication Error",
+				description: "You need to be logged in to upload files.",
+				variant: "destructive",
+			});
+			return;
+		}
+
+		setIsUploadingThumbnail(true);
+
+		try {
+			console.log('Uploading thumbnail file:', file);
+			const result: Result = await uploadMedia(file, token);
+			console.log('Upload result:', result);
+
+			if (result.error) {
+				toast({
+					title: "Upload Failed",
+					description: result.error,
+					variant: "destructive",
+				});
+			} else {
+				// Assuming the result contains the file URL or filename
+				const thumbnailUrl = result.data?.url || result.data?.filename || result.data;
+				console.log('Thumbnail URL:', thumbnailUrl);
+
+				updateQuizData({ thumbnail: thumbnailUrl });
+
+				toast({
+					title: "Upload Successful",
+					description: "Thumbnail uploaded successfully!",
+					variant: "default",
+				});
+			}
+		} catch (error) {
+			console.error('Upload error:', error);
+			toast({
+				title: "Upload Failed",
+				description: "Failed to upload thumbnail. Please try again.",
+				variant: "destructive",
+			});
+		} finally {
+			setIsUploadingThumbnail(false);
+		}
+	};
+
+	// Thumbnail Delete Handler
+	const handleThumbnailDelete = async (thumbnailId: string) => {
+		if (!token) {
+			toast({
+				title: "Authentication Error",
+				description: "You need to be logged in to delete files.",
+				variant: "destructive",
+			});
+			return;
+		}
+
+		try {
+			console.log('Deleting thumbnail:', thumbnailId);
+			const cleanedThumbnailId = thumbnailId.replace(/^media[\\/]/, "");
+			const result: Result = await deleteMedia(cleanedThumbnailId, token);
+			console.log('Delete result:', result);
+
+			if (result.error) {
+				toast({
+					title: "Delete Failed",
+					description: result.error,
+					variant: "destructive",
+				});
+			} else {
+				updateQuizData({ thumbnail: "" });
+
+				toast({
+					title: "Delete Successful",
+					description: "Thumbnail deleted successfully!",
+					variant: "default",
+				});
+			}
+		} catch (error) {
+			console.error('Delete error:', error);
+			toast({
+				title: "Delete Failed",
+				description: "Failed to delete thumbnail. Please try again.",
+				variant: "destructive",
+			});
+		}
+	};
 
 	return (
 		<motion.div
@@ -101,33 +198,13 @@ export function QuizBasicInfo({ quizData, updateQuizData }: QuizBasicInfoProps) 
 					</motion.div>
 
 					{/* Thumbnail Upload */}
-					<motion.div
-						initial={{ x: -20, opacity: 0 }}
-						animate={{ x: 0, opacity: 1 }}
-						transition={{ delay: 0.3 }}
-					>
-						<Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Thumbnail</Label>
-						<div className="mt-1 flex items-center gap-4">
-							<div className="flex-1">
-								<div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-purple-400 dark:hover:border-purple-500 transition-colors duration-200 cursor-pointer group">
-									<ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-purple-500 transition-colors duration-200" />
-									<p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-200">
-										Click to upload or drag and drop
-									</p>
-									<p className="text-xs text-gray-500 dark:text-gray-500 mt-1">PNG, JPG up to 5MB</p>
-								</div>
-							</div>
-							{quizData.thumbnail && (
-								<motion.div
-									initial={{ scale: 0 }}
-									animate={{ scale: 1 }}
-									className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600"
-								>
-									<img src={quizData.thumbnail || "/placeholder.svg"} alt="Thumbnail" className="w-full h-full object-cover" />
-								</motion.div>
-							)}
-						</div>
-					</motion.div>
+					<ThumbnailUpload
+						onDelete={handleThumbnailDelete}
+						onThumbnailChange={handleThumbnailUpload as any}
+						currentThumbnail={quizData.thumbnail}
+						onUpload={handleThumbnailUpload}
+						isUploading={isUploadingThumbnail}
+					/>
 
 					{/* Tags */}
 					<motion.div

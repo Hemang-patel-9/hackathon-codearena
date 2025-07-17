@@ -9,6 +9,7 @@ import type { QuizData } from "@/types/quiz"
 import type { QuestionData } from "@/types/question"
 import { QuestionCard } from "./question-card"
 import { QuestionTypeSelector } from "./question-type-selector"
+import { useAuth } from "@/contexts/authContext"
 
 interface QuestionBuilderProps {
 	quizData: QuizData
@@ -17,7 +18,7 @@ interface QuestionBuilderProps {
 
 export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderProps) {
 	const [showTypeSelector, setShowTypeSelector] = useState(false)
-
+	const { token } = useAuth();
 	const addQuestion = (type: QuestionData["questionType"]) => {
 		const newQuestion: QuestionData = {
 			questionText: "",
@@ -108,6 +109,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 							onUpdate={(updates) => updateQuestion(index, updates)}
 							onDelete={() => deleteQuestion(index)}
 							onDuplicate={() => duplicateQuestion(index)}
+							token={token as string}
 						/>
 					</motion.div>
 				))}
