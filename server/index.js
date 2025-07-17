@@ -30,11 +30,6 @@ fs.readdirSync(routesPath).forEach((file) => {
 	}
 });
 
-app.use('/api/badges', badgeRoutes);
-app.use('/api/questions', questionRoutes);
-app.use('./api/quizzes',quizRoutes)
-app.use('/api/scoreboards', scoreRoutes);
-
 // Root route
 app.get("/", (req, res) => {
 	res.send("Welcome to the Nodexor 😊");
