@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { ThemeProvider } from "./contexts/theme-context"
 import { ConfirmationProvider } from "./contexts/confirmation-context"
 import Layout from "./components/layout"
-import Dashboard from "./pages/dashboard"
+// import Dashboard from "./pages/dashboard"
+import { Dashboard } from "./components/dashboard/dashboard"
 import { Toaster } from "./components/ui/toaster"
 import NotFound from "./pages/NotFound"
 import Signup from "./pages/Signup"
@@ -13,6 +14,7 @@ import OtpPage from "./pages/otpVarificationPage"
 import GitHubSuccess from "./pages/GithubSuccess"
 import { HeroSection } from "./pages/Home"
 import { CreateQuizPage } from "./components/create-quiz/create-quiz-page"
+import QuizExplorer from "./pages/UserQuizRender"
 
 export default function App() {
   return (
@@ -24,6 +26,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/dashboard" />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/quiz" element={<QuizExplorer />} />
                 <Route path="/home" element={<HeroSection />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/quiz-creation" element={<CreateQuizPage />} />

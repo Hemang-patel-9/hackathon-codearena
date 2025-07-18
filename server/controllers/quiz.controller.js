@@ -3,6 +3,7 @@ const Quiz = require('../models/quiz.model');
 const bcrypt = require('bcryptjs');
 const Question = require('../models/question.model');
 const mongoose = require('mongoose');
+const scoreModel = require('../models/score.model');
 
 // @route   POST /api/quizzes
 const createQuiz = async (req, res) => {
@@ -243,10 +244,186 @@ const deleteQuiz = async (req, res) => {
     }
 };
 
+const getUserQuizzes = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Validate userId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid user ID'
+            });
+        }
+
+        // Get all quizzes created by the user
+        const createdQuizzes = await Quiz.find({ creator: userId })
+            .select('title description status duration schedule participants thumbnail tags createdAt')
+            .populate('participants', 'username email avatar')
+            .sort({ createdAt: -1 });
+
+        // Get all quizzes where user has participated (from scoreboard)
+        const participatedScoreboards = await scoreModel.find({
+            'participantScores.userId': userId
+        })
+            .populate({
+                path: 'quizId',
+                select: 'title description status duration schedule creator thumbnail tags createdAt',
+                populate: {
+                    path: 'creator',
+                    select: 'username email avatar'
+                }
+            })
+            .sort({ createdAt: -1 });
+
+        // Extract participated quizzes with user's scores
+        const participatedQuizzes = participatedScoreboards.map(scoreboard => {
+            const userScore = scoreboard.participantScores.find(
+                score => score.userId.toString() === userId
+            );
+
+            return {
+                quiz: scoreboard.quizId,
+                scoreDetails: {
+                    score: userScore.score,
+                    correctAnswersCount: userScore.correctAnswersCount,
+                    averageResponseTime: userScore.averageResponseTime,
+                    rank: userScore.rank,
+                    totalParticipants: scoreboard.participantScores.length
+                },
+                participatedAt: scoreboard.createdAt
+            };
+        });
+
+        // Get summary statistics
+        const totalCreated = createdQuizzes.length;
+        const totalParticipated = participatedQuizzes.length;
+        const averageScore = participatedQuizzes.length > 0
+            ? participatedQuizzes.reduce((sum, quiz) => sum + quiz.scoreDetails.score, 0) / participatedQuizzes.length
+            : 0;
+
+        res.status(200).json({
+            success: true,
+            data: {
+                summary: {
+                    totalCreated,
+                    totalParticipated,
+                    averageScore: Math.round(averageScore * 100) / 100
+                },
+                createdQuizzes,
+                participatedQuizzes
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching user quizzes:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error while fetching user quizzes',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
+// Get all public quizzes available for participation
+const getPublicQuizzes = async (req, res) => {
+    try {
+        // Find public quizzes that are upcoming or active, and ensure creator exists
+        const quizzes = await Quiz.find({
+            visibility: 'public',
+            status: { $in: ['upcoming', 'active'] },
+            creator: { $exists: true, $ne: null }, // Ensure creator field is not null
+        })
+            .select('title description schedule duration NoOfQuestion timePerQuestion thumbnail status')
+            .populate({
+                path: 'creator',
+                select: 'username avatar',
+                match: { _id: { $exists: true } }, // Ensure populated creator exists
+            })
+            .sort({ schedule: 1 }); // Sort by schedule in ascending order
+
+        // Filter out quizzes where creator failed to populate
+        const validQuizzes = quizzes.filter(quiz => quiz.creator !== null);
+
+        if (!validQuizzes || validQuizzes.length === 0) {
+            return res.status(404).json({
+                error: 'No public quizzes found with upcoming or active status',
+                message: 'No public quizzes found with upcoming or active status',
+                data: null,
+            });
+        }
+
+        // Return the list of public quizzes
+        return res.status(200).json({
+            error: null,
+            message: 'Public quizzes retrieved successfully',
+            data: validQuizzes,
+        });
+    } catch (error) {
+        console.error('Error fetching public quizzes:', error);
+        return res.status(500).json({
+            error: error.message,
+            message: 'Server error while fetching public quizzes',
+            data: null,
+        });
+    }
+};
+
+// Get upcoming private quizzes for a specific user
+const getUpcomingQuizzes = async (req, res) => {
+    try {
+        // Get userId from query parameter
+        const userId = req.params.id;
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({
+                error: 'Invalid user ID',
+                message: 'Invalid user ID',
+                data: null,
+            });
+        }
+
+        // Find upcoming private quizzes where the user is a participant
+        const quizzes = await Quiz.find({
+            visibility: 'private',
+            status: 'upcoming',
+            participants: userId,
+        })
+            .select('title description schedule duration NoOfQuestion timePerQuestion thumbnail')
+            .populate('creator', 'username avatar') // Populate creator's username and avatar
+            .sort({ schedule: 1 }); // Sort by schedule in ascending order
+
+        if (!quizzes || quizzes.length === 0) {
+            return res.status(404).json({
+                error: 'No upcoming private quizzes found for this user',
+                message: 'No upcoming private quizzes found for this user',
+                data: null,
+            });
+        }
+
+        // Return the list of upcoming private quizzes
+        return res.status(200).json({
+            error: null,
+            message: 'Upcoming private quizzes retrieved successfully',
+            data: quizzes,
+        });
+    } catch (error) {
+        console.error('Error fetching upcoming private quizzes:', error);
+        return res.status(500).json({
+            error: error.message,
+            message: 'Server error while fetching quizzes',
+            data: null,
+        });
+    }
+};
+
 module.exports = {
     createQuiz,
     getAllQuizzes,
     getQuizById,
     updateQuiz,
-    deleteQuiz
+    deleteQuiz,
+    getUserQuizzes,
+    getPublicQuizzes,
+    getUpcomingQuizzes
 }

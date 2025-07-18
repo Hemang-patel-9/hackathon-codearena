@@ -26,3 +26,36 @@ export async function createQuiz(formData: QuizData, token: string): Promise<Res
 		throw error;
 	}
 }
+
+export const fetchPrivateQuizzes = async (token: string, userId: string): Promise<Result> => {
+	const response = await fetch(`${API_BASE_URL}/quiz/upcoming/${userId}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error(`HTTP error! status: ${response.status}`);
+	}
+
+	const data: Result = await response.json();
+	return data;
+};
+
+export const fetchPublicQuizzes = async (): Promise<Result> => {
+	const response = await fetch(`${API_BASE_URL}/quiz/publicQuiz/all`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error(`HTTP error! status: ${response.status}`);
+	}
+
+	const data: Result = await response.json();
+	return data;
+};
