@@ -88,7 +88,7 @@ export function CreateQuizPage() {
 				description: "Quiz created successfully!",
 				variant: "default",
 			});
-			// navigate("/dashboard");
+			navigate("/dashboard");
 		}
 	}
 
@@ -104,10 +104,10 @@ export function CreateQuizPage() {
 			>
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
 					<div className="flex items-center gap-4">
-						<Button variant="ghost" size="sm" className="hover:scale-105 transition-transform duration-200">
+						{/* <Button variant="ghost" size="sm" className="hover:scale-105 transition-transform duration-200">
 							<ArrowLeft className="w-4 h-4 mr-2" />
 							Back to Dashboard
-						</Button>
+						</Button> */}
 						<h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
 							Create New Quiz
 						</h1>
