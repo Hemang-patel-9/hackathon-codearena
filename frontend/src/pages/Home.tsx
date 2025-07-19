@@ -9,7 +9,6 @@ import { useAuth } from "@/contexts/authContext"
 import type { Result } from "@/types/response"
 import { getUserAnalytics, getQuizAnalytics } from "@/api/analytics"
 import type { QuizAnalyticsData, UserAnalyticsData } from '@/types/analytics';
-import { console } from "inspector/promises"
 
 export function HeroSection() {
 
