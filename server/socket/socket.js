@@ -31,11 +31,12 @@ const initializeSocket = (server) => {
 		});
 
 		// 🔸 Student joins quiz
-		socket.on("student:join-quiz", ({ quizId, userId, username }) => {
+		socket.on("student:join-quiz", ({ quizId, userId, username, avatar }) => {
 			if (!room[quizId]) return socket.emit("quiz:not-ready");
 
 			room[quizId].participants[userId] = {
 				username,
+				avatar,
 				score: 0,
 				correctAnswersCount: 0,
 				rank: 0
@@ -46,15 +47,22 @@ const initializeSocket = (server) => {
 		});
 
 		// 🔸 Student submits answer
-		socket.on("student:submit-answer", ({ quizId, userId, isCorrect }) => {
+		socket.on("student:submit-answer", ({ quizId, userId, isCorrect, score, violations }) => {
 			const quiz = room[quizId];
 			if (!quiz || !quiz.participants[userId]) return;
 
 			const player = quiz.participants[userId];
 			console.log(player, "11");
 
+			// Update score and violations
+			if (typeof score === "number") {
+				player.score += score;
+			}
+			if (typeof violations === "number") {
+				player.violations = violations;
+			}
+
 			if (isCorrect) {
-				player.score += 10;
 				player.correctAnswersCount += 1;
 			}
 
@@ -66,12 +74,14 @@ const initializeSocket = (server) => {
 				quiz.participants[uid].rank = index + 1;
 			});
 			console.log(player, "00");
+
 			// ✉️ Emit updated data to student
-			// socket.emit("quiz:update-self", {
-			// 	score: player.score,
-			// 	correctAnswersCount: player.correctAnswersCount,
-			// 	rank: player.rank
-			// });
+			socket.emit("quiz:update-self", {
+				score: player.score,
+				correctAnswersCount: player.correctAnswersCount,
+				rank: player.rank,
+				violations: player.violations
+			});
 
 			// ✉️ Emit full leaderboard to everyone in room
 			const leaderboard = sorted.map(([uid, data]) => ({

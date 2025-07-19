@@ -280,7 +280,10 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 			socket.emit("student:submit-answer", {
 				quizId: examData._id,
 				userId: user?._id,
-				isCorrect: isCorrect
+				isCorrect: isCorrect,
+				score: questionScore,
+				violations: examState.cheatingAttempts,
+				avatar: user?.avatar,
 			})
 		}
 		setIsAnswerCorrect(isCorrect)

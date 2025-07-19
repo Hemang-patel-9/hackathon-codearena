@@ -225,8 +225,8 @@ export default function StartExam() {
 		}
 		setTimeout(() => {
 			if (socket) {
-				console.log({ quizId: params.quizId, userId: user?._id, username: user?.username })
-				socket.emit("student:join-quiz", { quizId: params.quizId, userId: user?._id, username: user?.username });
+				console.log({ quizId: params.quizId, userId: user?._id, username: user?.username, avatar: user?.avatar })
+				socket.emit("student:join-quiz", { quizId: params.quizId, userId: user?._id, username: user?.username, avatar: user?.avatar });
 			}
 		}, 500);
 		fetchExamData();
