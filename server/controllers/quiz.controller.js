@@ -1,12 +1,11 @@
 // controllers/quizController.js
 const Quiz = require('../models/quiz.model');
-const Question = require('../models/question.model');
-const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
-const mongoose = require('mongoose')
+const Question = require('../models/question.model');
+const mongoose = require('mongoose');
 
 // @route   POST /api/quizzes
-exports.createQuiz = async (req, res) => {
+const createQuiz = async (req, res) => {
     try {
         let {
             creator,
@@ -28,27 +27,21 @@ exports.createQuiz = async (req, res) => {
         } = req.body;
 
         if (!title || !creator) {
-            return res.status(400).json({ success: false, message: 'Title and creator are required.' });
+            return res.status(400).json({ error: "Data is missing", data: null, message: 'Title and creator are required.' });
         }
 
         if (!mongoose.Types.ObjectId.isValid(creator)) {
-            return res.status(400).json({ success: false, message: 'Invalid creator ID format.' });
+            return res.status(400).json({ error: "Invalid creator ID format.", data: null, message: 'Invalid creator ID format.' });
         }
 
         if (questions && questions.length > 0) {
-            const invalidQuestionIds = questions.filter(id => !mongoose.Types.ObjectId.isValid(id));
-            if (invalidQuestionIds.length > 0) {
-                return res.status(400).json({ success: false, message: 'One or more provided question IDs are invalid.' });
-            }
-
-            NoOfQuestion = questions.length;
-        } else if (questions && questions.length === 0) {
-            NoOfQuestion = 0;
+            const insertedQuestions = await Question.insertMany(questions);
+            questions = insertedQuestions.map(q => q._id);
         }
 
         if (visibility === 'password-protected') {
             if (!password) {
-                return res.status(400).json({ success: false, message: 'Password is required for password-protected quizzes.' });
+                return res.status(400).json({ error: "Password is required for password-protected quizzes.", data: null, message: 'Password is required for password-protected quizzes.' });
             }
             const salt = await bcrypt.genSalt(10);
             password = await bcrypt.hash(password, salt);
@@ -91,7 +84,7 @@ exports.createQuiz = async (req, res) => {
 };
 
 // @route   GET /api/quizzes
-exports.getAllQuizzes = async (req, res) => {
+const getAllQuizzes = async (req, res) => {
     try {
         const quizzes = await Quiz.find({})
             .populate('creator', 'username email')
@@ -105,7 +98,7 @@ exports.getAllQuizzes = async (req, res) => {
 };
 
 // @route   GET /api/quizzes/:id
-exports.getQuizById = async (req, res) => {
+const getQuizById = async (req, res) => {
     try {
         const quizId = req.params.id;
         const providedPassword = req.body.password || req.query.password;
@@ -144,7 +137,7 @@ exports.getQuizById = async (req, res) => {
 };
 
 // @route   PUT /api/quizzes/:id
-exports.updateQuiz = async (req, res) => {
+const updateQuiz = async (req, res) => {
     try {
         const quizId = req.params.id;
         let {
@@ -232,7 +225,7 @@ exports.updateQuiz = async (req, res) => {
 };
 
 // @route   DELETE /api/quizzes/:id
-exports.deleteQuiz = async (req, res) => {
+const deleteQuiz = async (req, res) => {
     try {
         const deletedQuiz = await Quiz.findByIdAndDelete(req.params.id);
 
@@ -250,7 +243,7 @@ exports.deleteQuiz = async (req, res) => {
     }
 };
 
-exports.getAccessibleQuizzesByUser = async (req, res) => {
+const getAccessibleQuizzesByUser = async (req, res) => {
     try {
         const userId = req.params.id;
 
@@ -282,45 +275,64 @@ exports.getAccessibleQuizzesByUser = async (req, res) => {
     }
 };
 
-exports.checkPasswordProtectedQuizAccess = async (req, res) => {
-  try {
-    const { quizId, userId, password } = req.body;
+const checkPasswordProtectedQuizAccess = async (req, res) => {
+    try {
+        const { quizId, userId, password } = req.body;
 
-    // Validate ObjectIds
-    if (!mongoose.Types.ObjectId.isValid(quizId) || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid IDs provided." });
+        // Validate ObjectIds
+        if (!mongoose.Types.ObjectId.isValid(quizId) || !mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: "Invalid IDs provided." });
+        }
+
+        // Validate password presence
+        if (!password) {
+            return res.status(400).json({ success: false, message: "Password is required." });
+        }
+
+        const quiz = await Quiz.findById(quizId);
+
+        if (!quiz) {
+            return res.status(404).json({ success: false, message: "Quiz not found." });
+        }
+
+        if (quiz.visibility !== "password-protected") {
+            return res.status(403).json({ success: false, message: "Quiz is not password protected." });
+        }
+
+        if (!quiz.password) {
+            return res.status(500).json({ success: false, message: "Password not set for this protected quiz." });
+        }
+
+        // Check if user is a participant
+        const isParticipant = quiz.participants.some((participantId) =>
+            participantId.equals(userId)
+        );
+
+        if (!isParticipant) {
+            return res.status(403).json({ success: false, message: "User is not a participant." });
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, quiz.password);
+
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: "Incorrect password." });
+        }
+
+        return res.status(200).json({ success: true, message: "Access granted." });
+
+    } catch (error) {
+        console.error("Error checking quiz access:", error);
+        return res.status(500).json({ success: false, message: "Server error." });
     }
-
-    const quiz = await Quiz.findById(quizId);
-
-    if (!quiz) {
-      return res.status(404).json({ success: false, message: "Quiz not found." });
-    }
-
-    if (quiz.visibility !== "password-protected") {
-      return res.status(403).json({ success: false, message: "Quiz is not password protected." });
-    }
-
-    // Check if user is a participant
-    const isParticipant = quiz.participants.some((participantId) =>
-      participantId.equals(userId)
-    );
-
-    if (!isParticipant) {
-      return res.status(403).json({ success: false, message: "User is not a participant." });
-    }
-
-    // Check password
-    const isMatch = await bcrypt.compare(password, quiz.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Incorrect password." });
-    }
-
-    return res.status(200).json({ success: true, message: "Access granted." });
-
-  } catch (error) {
-    console.error("Error checking quiz access:", error);
-    return res.status(500).json({ success: false, message: "Server error." });
-  }
 };
+
+module.exports = {
+    checkPasswordProtectedQuizAccess,
+    getAccessibleQuizzesByUser,
+    getQuizById,
+    deleteQuiz,
+    updateQuiz,
+    getAllQuizzes,
+    createQuiz
+}

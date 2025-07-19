@@ -17,7 +17,7 @@ import {
 	Search,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
 	AreaChart,
 	Area,
@@ -33,45 +33,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-
-const stats = [
-	{
-		title: "Active Projects",
-		value: "12",
-		change: "+2 from last month",
-		icon: Building2,
-		color: "text-blue-600",
-		trend: "up",
-		percentage: 16.7,
-	},
-	{
-		title: "Total Workers",
-		value: "248",
-		change: "+12 from last week",
-		icon: HardHat,
-		color: "text-green-600",
-		trend: "up",
-		percentage: 5.1,
-	},
-	{
-		title: "Equipment Active",
-		value: "89%",
-		change: "-3% from last month",
-		icon: Wrench,
-		color: "text-orange-600",
-		trend: "down",
-		percentage: -3.2,
-	},
-	{
-		title: "Monthly Revenue",
-		value: "$142,800",
-		change: "+18% from last month",
-		icon: DollarSign,
-		color: "text-purple-600",
-		trend: "up",
-		percentage: 18.2,
-	},
-]
+import { useSocket } from "@/hooks/use-socket"
 
 const projectStatusData = [
 	{ name: "Planning", value: 3, color: "#3b82f6" },
@@ -124,14 +86,78 @@ const recentActivities = [
 export default function Dashboard() {
 	const [searchQuery, setSearchQuery] = useState("")
 	const controls = useAnimation()
+	const socket = useSocket()
+	const [activeUser, setActiveUser] = useState(0);
+
+	const stats = useMemo(() => [
+		{
+			title: "Active Users",
+			value: activeUser.toString(),
+			change: "+2 from last month",
+			icon: Building2,
+			color: "text-blue-600",
+			trend: "up",
+			percentage: 16.7,
+		},
+		{
+			title: "Total Workers",
+			value: "248",
+			change: "+12 from last week",
+			icon: HardHat,
+			color: "text-green-600",
+			trend: "up",
+			percentage: 5.1,
+		},
+		{
+			title: "Equipment Active",
+			value: "89%",
+			change: "-3% from last month",
+			icon: Wrench,
+			color: "text-orange-600",
+			trend: "down",
+			percentage: -3.2,
+		},
+		{
+			title: "Monthly Revenue",
+			value: "$142,800",
+			change: "+18% from last month",
+			icon: DollarSign,
+			color: "text-purple-600",
+			trend: "up",
+			percentage: 18.2,
+		}
+	], [activeUser]);
+
 
 	useEffect(() => {
 		controls.start({
 			opacity: 1,
 			y: 0,
 			transition: { duration: 0.6, ease: "easeOut" },
-		})
+		});
 	}, [controls])
+
+	useEffect(() => {
+		if (!socket) return;
+
+		const handleActiveUsers = (count: number) => {
+			setActiveUser(count);
+			console.log("Active users count received:", count);
+			console.log("Currently online users:", count);
+		};
+
+		socket.on("active-users", handleActiveUsers);
+
+	 // Emit event every 5 seconds
+		const interval = setInterval(() => {
+			socket.emit("get-active-users");
+		}, 5000);
+
+		return () => {
+			socket.off("active-users", handleActiveUsers);
+			clearInterval(interval);
+		};
+	}, [socket]);
 
 	const filteredTasks = upcomingTasks.filter(
 		(task) =>

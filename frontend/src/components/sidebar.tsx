@@ -5,7 +5,6 @@ import { Link, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
 	LayoutDashboard,
-	Building2,
 	Receipt,
 	FileText,
 	Users,
@@ -13,6 +12,7 @@ import {
 	CreditCard,
 	ChevronLeft,
 	ChevronRight,
+	Home,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -23,9 +23,9 @@ interface SidebarProps {
 
 const navigationItems = [
 	{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-	{ name: "Home", href: "/home", icon: Building2 },
+	{ name: "Home", href: "/home", icon: Home },
 	{ name: "Quizes", href: "/Quizes", icon: Receipt },
-	{ name: "Invoice", href: "/invoices", icon: FileText },
+	{ name: "Create", href: "/quiz-creation", icon: FileText },
 	{ name: "Clients", href: "/clients", icon: Users },
 	{ name: "Reports", href: "/reports", icon: BarChart3 },
 	{ name: "Payments", href: "/payments", icon: CreditCard },
@@ -33,6 +33,7 @@ const navigationItems = [
 
 export default function Sidebar({ onClose }: SidebarProps) {
 	const [isExpanded, setIsExpanded] = useState(true)
+	const [hoveredItem, setHoveredItem] = useState<string | null>(null)
 	const location = useLocation()
 
 	const toggleExpanded = () => {
@@ -54,7 +55,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
 				variant="ghost"
 				size="icon"
 				onClick={toggleExpanded}
-				className="absolute -right-3 top-6 z-10 h-6 w-6 rounded-full border border-border bg-background shadow-md hidden lg:flex"
+				className="absolute -right-3 top-20 z-10 h-6 w-6 rounded-full border border-border bg-background shadow-md hidden lg:flex"
 			>
 				{isExpanded ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
 			</Button>
@@ -86,23 +87,63 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
 				<nav className="space-y-2">
 					{navigationItems.map((item) => {
-						const isActive = location.pathname.indexOf(item.href)!=-1
+						const isActive = location.pathname.indexOf(item.href) !== -1
+						const isHovered = hoveredItem === item.name
 						const Icon = item.icon
 
 						return (
-							<motion.div key={item.name} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+							<motion.div
+								key={item.name}
+								className="relative"
+								onMouseEnter={() => setHoveredItem(item.name)}
+								onMouseLeave={() => setHoveredItem(null)}
+							>
+								{/* Curved background effect */}
+								<motion.div
+									className="absolute inset-0 bg-accent/50 rounded-l-lg"
+									initial={{ scaleX: 0, transformOrigin: "left" }}
+									animate={{
+										scaleX: isHovered ? 1 : 0,
+										borderRadius: isHovered ? "0.5rem 2rem 2rem 0.5rem" : "0.5rem"
+									}}
+									transition={{
+										duration: 0.3,
+										ease: "easeInOut",
+										type: "spring",
+										stiffness: 300,
+										damping: 30
+									}}
+								/>
+
 								<Link
 									to={item.href}
 									onClick={onClose}
 									className={cn(
-										"flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors duration-200",
+										"relative flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-300 z-10",
 										isActive
-											? "bg-primary text-primary-foreground"
-											: "text-muted-foreground hover:text-foreground hover:bg-accent",
+											? "bg-primary text-primary-foreground shadow-lg"
+											: "text-muted-foreground hover:text-foreground",
 										!isExpanded && "justify-center",
 									)}
 								>
-									<Icon className="h-5 w-5 flex-shrink-0" />
+									{/* Icon with enhanced hover effect */}
+									<motion.div
+										className="flex items-center justify-center"
+										animate={{
+											scale: isHovered ? 1.4 : 1,
+											// rotate: isHovered ? 5 : 0,
+										}}
+										transition={{
+											duration: 0.3,
+											ease: "easeInOut",
+											type: "spring",
+											stiffness: 400,
+											damping: 25
+										}}
+									>
+										<Icon className="h-5 w-5 flex-shrink-0" />
+									</motion.div>
+
 									<AnimatePresence>
 										{isExpanded && (
 											<motion.span
@@ -117,6 +158,22 @@ export default function Sidebar({ onClose }: SidebarProps) {
 										)}
 									</AnimatePresence>
 								</Link>
+
+								{/* Additional glow effect on hover */}
+								<motion.div
+									className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/20 to-accent/40 rounded-l-lg pointer-events-none"
+									initial={{ opacity: 0, scaleX: 0 }}
+									animate={{
+										opacity: isHovered ? 1 : 0,
+										scaleX: isHovered ? 1 : 0,
+										borderRadius: isHovered ? "0.5rem 2rem 2rem 0.5rem" : "0.5rem"
+									}}
+									transition={{
+										duration: 0.3,
+										ease: "easeInOut",
+										delay: isHovered ? 0.1 : 0
+									}}
+								/>
 							</motion.div>
 						)
 					})}

@@ -1,28 +1,28 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const http = require("http");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const path = require("path");
+const { initializeSocket } = require("./socket/socket");
 
-// Import routes
-const badgeRoutes = require('./routes/badge.router');
-const questionRoutes = require('./routes/question.router');
-const scoreRoutes = require('./routes/score.router');
-const quizRoutes = require('./routes/quiz.router')
-const quizGenerationRoutes = require('./routes/generator.router');
-const analyticsRoutes = require('./routes/analytics.router');
-
-require("./lib/connection")();
 const app = express();
+const server = http.createServer(app);
 
-// Middlewares
-app.use("/media", express.static('media'));
+// MongoDB connection
+require("./lib/connection")();
+
+// Initialize Socket.IO
+initializeSocket(server);
+
+// Middleware
+app.use("/media", express.static("media"));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Auto-load routes
+// Auto-load all routes ending with `.router.js`
 const routesPath = path.join(__dirname, "routes");
 fs.readdirSync(routesPath).forEach((file) => {
 	if (file.endsWith(".router.js")) {
@@ -32,26 +32,19 @@ fs.readdirSync(routesPath).forEach((file) => {
 	}
 });
 
-app.use('/api/badges', badgeRoutes);
-app.use('/api/questions', questionRoutes);
-app.use('/api/quizzes',quizRoutes);
-app.use('/api/scoreboards', scoreRoutes);
-app.use('/api/generate', quizGenerationRoutes);
-app.use('/api/analytics',analyticsRoutes);
-
 // Root route
 app.get("/", (req, res) => {
-	res.send("Welcome to the Nodexor 😊");
+	res.send("✅ Real-time Quiz Server is up!");
 });
 
-// Global Error Handler
+// Error handling
 app.use((err, req, res, next) => {
 	console.error(err.stack);
-	res.status(500).json({ error: true, data: null, message: "Internal Server Error" });
+	res.status(500).json({ error: true, message: "Internal Server Error" });
 });
 
-// Server
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-	console.log(`🚀 Server is running at http://localhost:${PORT}`);
+// Start server
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+	console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
