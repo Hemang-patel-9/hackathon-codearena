@@ -3,25 +3,40 @@
 import { TrendingUp, Users, Clock, Award } from "lucide-react"
 import { useEffect, useState } from "react"
 
-export function StatsSection() {
+export function StatsSection({ quizAnalytics, userAnalytics }: any) {
 	const [isVisible, setIsVisible] = useState(false)
-	const [counts, setCounts] = useState({ users: 0, quizzes: 0, satisfaction: 0 })
+	// const [counts, setCounts] = useState({ users: 0, quizzes: 0, satisfaction: 0 })
+
 
 	const stats = [
-		{ icon: Users, value: "10K+", label: "Active Players", color: "text-blue-500", countKey: "users", target: 10000 },
+		{
+			icon: Users,
+			value: userAnalytics.totalUsers,
+			label: "Active Players",
+			color: "text-blue-500",
+			countKey: "users",
+			target: userAnalytics.totalUsers
+		},
 		{
 			icon: TrendingUp,
-			value: "50K+",
+			value: quizAnalytics.totalQuizzes,
 			label: "Quizzes Created",
 			color: "text-green-500",
 			countKey: "quizzes",
-			target: 50000,
+			target: quizAnalytics.totalQuizzes,
 		},
-		{ icon: Clock, value: "24/7", label: "Real-time Gaming", color: "text-purple-500", countKey: null, target: 0 },
+		{
+			icon: Clock,
+			value: quizAnalytics.activeQuizzes,
+			label: "Active QUizzes",
+			color: "text-purple-500",
+			countKey: null,
+			target: quizAnalytics.activeQuizzes
+		},
 		{
 			icon: Award,
-			value: "95%",
-			label: "User Satisfaction",
+			value: userAnalytics.verifiedUsers,
+			label: "Verifies User",
 			color: "text-yellow-500",
 			countKey: "satisfaction",
 			target: 95,
@@ -65,7 +80,7 @@ export function StatsSection() {
 
 	return (
 		<div id="stats-section" className="scroll-animate grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
-			{stats.map(({ icon: Icon, value, label, color, countKey }, index) => (
+			{stats.map(({ icon: Icon, value, label, color }, index) => (
 				<div
 					key={index}
 					className={`text-center group hover:scale-110 transition-all duration-500 ${isVisible ? "animate-bounce-in" : "opacity-0 scale-0"}`}
@@ -76,13 +91,14 @@ export function StatsSection() {
 							className={`w-8 h-8 ${color} mx-auto mb-3 group-hover:animate-bounce transition-transform duration-300 group-hover:scale-125`}
 						/>
 						<div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-							{countKey
+							{/* {countKey
 								? countKey === "satisfaction"
 									? `${counts[countKey]}%`
 									: countKey === "users"
 										? `${Math.floor(counts[countKey] / 1000)}K+`
 										: `${Math.floor(counts[countKey] / 1000)}K+`
-								: value}
+								: value} */}
+								{value} + 
 						</div>
 						<div className="text-sm text-gray-600 dark:text-gray-400">{label}</div>
 					</div>

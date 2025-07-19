@@ -14,7 +14,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-	const { isAuthLoading } = useAuth();
+	const { isAuthLoading, token } = useAuth();
 	const [sidebarOpen, setSidebarOpen] = useState(false)
 	const location = useLocation()
 
@@ -48,11 +48,15 @@ export default function Layout({ children }: LayoutProps) {
 				<Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 			</div>
 
+
 			<div className="flex">
 				{/* Desktop Sidebar - Fixed */}
-				<div className="hidden lg:block">
-					<Sidebar />
-				</div>
+				{
+					token ?
+						<div className="hidden lg:block">
+							<Sidebar />
+						</div> : <></>
+				}
 
 				{/* Mobile Sidebar Overlay */}
 				<AnimatePresence>
@@ -90,6 +94,6 @@ export default function Layout({ children }: LayoutProps) {
 					</div>
 				</main>
 			</div>
-		</div>
+		</div >
 	)
 }

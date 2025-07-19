@@ -17,19 +17,33 @@ export interface User {
 	_id: string
 	username: string
 	email: string
-	avatar?: string
 	role: "user" | "admin" | "moderator"
 	isVerified: boolean
 	isBanned: boolean
 	bio: string
-	socialLinks: {
-		github: string
-		linkedin: string
-		twitter: string
-		website: string
-	}
+	avatar?: string
 	createdAt: string
 	updatedAt: string
+	socialLinks: {
+		github?: string
+		linkedin?: string
+		twitter?: string
+		website?: string
+	}
+	achievements: string[]
+	recentQuizzes?: {
+		quizId: string
+		title: string
+		description: string
+		schedule: string
+		status: string
+		score: {
+			score: number
+			correctAnswersCount: number
+			averageResponseTime: number
+			rank: number
+		} | null
+	}[]
 }
 
 export interface PasswordFormData {

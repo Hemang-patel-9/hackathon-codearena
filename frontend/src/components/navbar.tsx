@@ -34,8 +34,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 					<motion.div whileHover={{ scale: 1.05 }} className="flex items-center cursor-pointer space-x-2" onClick={() => {
 						navigate("/");
 					}}>
-						<div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-							<span className="text-primary-foreground font-bold text-sm">XQ</span>
+						<div className="w-8 h-8 bg-gradient-to-tr from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+							<span className="text-foreground font-bold text-sm">XQ</span>
 						</div>
 						<span className="font-bold text-xl hidden sm:block">XQuizz</span>
 					</motion.div>
