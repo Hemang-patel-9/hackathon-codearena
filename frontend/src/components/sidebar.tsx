@@ -24,7 +24,7 @@ interface SidebarProps {
 const navigationItems = [
 	{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
 	{ name: "Home", href: "/home", icon: Home },
-	{ name: "Quizes", href: "/Quizes", icon: Receipt },
+	{ name: "Quizes", href: "/quiz", icon: Receipt },
 	{ name: "Create", href: "/quiz-creation", icon: FileText },
 	{ name: "Clients", href: "/clients", icon: Users },
 	{ name: "Reports", href: "/reports", icon: BarChart3 },

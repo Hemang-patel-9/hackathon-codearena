@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { ThemeProvider } from "./contexts/theme-context"
 import { ConfirmationProvider } from "./contexts/confirmation-context"
 import Layout from "./components/layout"
-import Dashboard from "./pages/dashboard"
+// import Dashboard from "./pages/dashboard"
+import { Dashboard } from "./components/dashboard/dashboard"
 import { Toaster } from "./components/ui/toaster"
 import NotFound from "./pages/NotFound"
 import Signup from "./pages/Signup"
@@ -13,8 +14,9 @@ import OtpPage from "./pages/otpVarificationPage"
 import GitHubSuccess from "./pages/GithubSuccess"
 import { HeroSection } from "./pages/Home"
 import { CreateQuizPage } from "./components/create-quiz/create-quiz-page"
+import QuizExplorer from "./pages/UserQuizRender"
 import { SocketProvider } from "./contexts/socketContext"
-import QuizExplorer from "./pages/Quizzes"
+// import QuizExplorer from "./pages/Quizzes"
 import StartExam from "./pages/StartExam"
 
 export default function App() {
@@ -28,10 +30,11 @@ export default function App() {
                 <Routes>
                   <Route path="/" element={<Navigate to="/dashboard" />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/quiz" element={<QuizExplorer />} />
                   <Route path="/home" element={<HeroSection />} />
                   <Route path="/login" element={<LoginPage />} />
-                  <Route path="/quizzes" element={<QuizExplorer />} />
                   <Route path="/start" element={<StartExam />} />
+                  <Route path="/quizzes" element={<QuizExplorer />} />
                   <Route path="/quiz-creation" element={<CreateQuizPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/signup" element={<Signup />} />
