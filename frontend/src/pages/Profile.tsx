@@ -326,12 +326,12 @@ export default function ProfilePage() {
 				<PasswordSaveSuccess passwordSaveSuccess={passwordSaveSuccess} />
 
 				{/* Tabs */}
-				<div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+				<div className="flex space-x-1 mb-6 bg-transparent rounded-lg p-1">
 					<button
 						onClick={() => setActiveTab("profile")}
 						className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === "profile"
-							? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
-							: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+							? "bg-gradient-to-tr dark:from-purple-950/30 dark:to-blue-950/30 from-purple-100 to-blue-100 text-blue-600 dark:text-blue-400 shadow-sm"
+							: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200  hover:bg-gradient-to-tr hover:dark:from-purple-950/15 hover:dark:to-blue-950/15 hover:from-purple-50 hover:to-blue-50"
 							}`}
 					>
 						<User className="w-4 h-4 inline mr-2" />
@@ -340,8 +340,8 @@ export default function ProfilePage() {
 					<button
 						onClick={() => setActiveTab("security")}
 						className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === "security"
-							? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
-							: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+							? "bg-gradient-to-tr dark:from-purple-950/30 dark:to-blue-950/30 from-purple-100 to-blue-100 text-blue-600 dark:text-blue-400 shadow-sm"
+							: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gradient-to-tr hover:dark:from-purple-950/15 hover:dark:to-blue-950/15 hover:from-purple-50 hover:to-blue-50"
 							}`}
 					>
 						<Shield className="w-4 h-4 inline mr-2" />
@@ -351,7 +351,7 @@ export default function ProfilePage() {
 
 				{/* Profile Form */}
 				{activeTab === "profile" && (
-					<Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+					<Card className="border-0 shadow-lg shadow-foreground/10  backdrop-blur-sm">
 						<CardContent className="p-6">
 							<form onSubmit={handleProfileSubmit} className="space-y-6">
 								<motion.div

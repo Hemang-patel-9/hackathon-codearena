@@ -73,9 +73,7 @@ const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
             ref={ref}
             className={cn(
                 "inline-flex items-center justify-center rounded-lg p-1 transition-all duration-200",
-                "bg-gray-100 text-gray-600 shadow-sm",
-                "dark:bg-gray-800 dark:text-gray-400",
-                "border border-gray-200 dark:border-gray-700",
+                "shadow-sm",
                 className
             )}
             {...props}
@@ -100,15 +98,11 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
                     "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     "disabled:pointer-events-none disabled:opacity-50",
-                    "hover:bg-gray-50 dark:hover:bg-gray-700",
+                    "hover:bg-gradient-to-r dark:hover:from-purple-900/30 dark:hover:to-blue-900/30 hover:from-purple-200 hover:to-blue-200",
                     isActive && [
-                        "bg-white text-gray-900 shadow-sm",
-                        "dark:bg-gray-700 dark:text-gray-100",
-                        "ring-1 ring-gray-200 dark:ring-gray-600"
-                    ],
-                    !isActive && [
-                        "text-gray-600 dark:text-gray-400",
-                        "hover:text-gray-900 dark:hover:text-gray-100"
+                        "shadow-sm",
+                        "hover:bg-gradient-to-r dark:from-purple-900/30 dark:to-blue-900/30 from-purple-200 to-blue-200",
+                        "ring-1 ring-gray-200 dark:ring-purple-950"
                     ],
                     className
                 )}

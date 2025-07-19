@@ -27,6 +27,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		setUser(user);
 		setToken(token);
 		localStorage.setItem("token", token);
+		
+		
 	};
 
 	const logout = () => {
@@ -45,7 +47,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			}
 
 			try {
-
 				const res = await fetch(`${import.meta.env.VITE_APP_API_URL}/user/auth`, {
 					method: "GET",
 					headers: {
