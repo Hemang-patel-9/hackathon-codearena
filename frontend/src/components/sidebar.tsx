@@ -10,8 +10,8 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	Home,
-	Icon,
 	User2,
+	Lock
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/authContext"
 interface SidebarProps {
 	onClose?: () => void
 }
+
 
 export default function Sidebar({ onClose }: SidebarProps) {
 
