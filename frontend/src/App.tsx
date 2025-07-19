@@ -14,6 +14,9 @@ import GitHubSuccess from "./pages/GithubSuccess"
 import { HeroSection } from "./pages/Home"
 import { CreateQuizPage } from "./components/create-quiz/create-quiz-page"
 import { SocketProvider } from "./contexts/socketContext"
+import QuizExplorer from "./pages/Quizez"
+import AdminDashboard from "./pages/Admin/AdminDashboard"
+import UserManagement from "./pages/Admin/UserManagement"
 
 export default function App() {
   return (
@@ -24,18 +27,22 @@ export default function App() {
             <Router>
               <Layout>
                 <Routes>
-                  <Route path="/" element={<Navigate to="/dashboard" />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/admin" element={<Navigate to={"/admin/dashboard"} />} />
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/Users" element={<UserManagement />} />
+
+                  <Route path="/" element={<Navigate to="/home" />} />
                   <Route path="/home" element={<HeroSection />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/quiz-creation" element={<CreateQuizPage />} />
+                  <Route path="/quizes" element={<QuizExplorer />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/otp" element={<OtpPage />} />
                   <Route path="/github-success" element={<GitHubSuccess />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </Layout>``
+              </Layout>
             </Router>
           </SocketProvider>
           <Toaster />
