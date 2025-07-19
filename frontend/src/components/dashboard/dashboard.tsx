@@ -103,10 +103,7 @@ export function Dashboard() {
 
     const handleUpdateQuiz = async (quizId: string, updates: Partial<Quiz>) => {
         try {
-            const result = await updateQuiz(quizId, updates, token as string)
-            if (!result.success) {
-                throw new Error(result.message)
-            }
+            const result = await updateQuiz(quizId, updates, token as string)      
             console.log("Update quiz response:", result.data)
             setQuizData((prev) => {
                 if (!prev) return prev
