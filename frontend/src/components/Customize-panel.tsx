@@ -165,7 +165,7 @@ export default function CustomizationPanel({
     ]
 
     return (
-        <div className="h-full bg-gradient-to-b from-slate-800/95 to-slate-900/95 backdrop-blur-xl border-r border-white/10 ">
+        <div className="bg-gradient-to-b overflow-auto from-slate-800/95 to-slate-900/95 backdrop-blur-xl border-r border-white/10 ">
             {/* Header */}
             <div className="p-6 border-b border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-2">Style Studio</h2>
