@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const axios = require("axios");
 
 const validateBasicFormat = (questionObj) => {
   if (
@@ -10,8 +10,8 @@ const validateBasicFormat = (questionObj) => {
   ) return false;
 
   if (
-    questionObj.options &&
-    (!Array.isArray(questionObj.options) || questionObj.options.length !== 4)
+    questionObj.questionType !== "open-ended" &&
+    (!Array.isArray(questionObj.options) || questionObj.options.length < 2)
   ) return false;
 
   if (
@@ -23,117 +23,61 @@ const validateBasicFormat = (questionObj) => {
 };
 
 exports.generateQuizQuestions = async (req, res) => {
-  const { questions: numQuestions, topic } = req.body;
-
-  if (!numQuestions || typeof numQuestions !== 'number' || numQuestions <= 0) {
-    return res.status(400).json({ success: false, message: 'Number of questions must be a positive number.' });
-  }
-
-  if (!topic || typeof topic !== 'string' || topic.trim() === '') {
-    return res.status(400).json({ success: false, message: 'Topic is required and must be a non-empty string.' });
-  }
-
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" }); // Gemini 2.0
-
-  const prompt = `
-You are a question generator. Your task is to return ONLY a valid JSON object based on the topic below.
-
-Topic: "${topic}"
-Number of Questions: ${numQuestions}
-
-Rules:
-1. If the topic is inappropriate (e.g., related to violence, nudity, abuse, hate, unfair or unethical content), respond with:
-{
-  "error": "Inappropriate topic",
-  "message": "Question generation failed due to unsafe topic.",
-  "data": null
-}
-2. Else, generate exactly ${numQuestions} questions about the topic.
-3. Each question must have:
-   - "questionText": string
-   - "questionType": one of ["multiple-choice", "true-false", "open-ended", "multiple-select"]
-   - "options": 
-     - If questionType is "open-ended": options must be null
-     - Else: options must be an array of 4 options with:
-        {
-          "text": string,
-          "isCorrect": true | false
-        }
-
-Return a **valid JSON object only** in the following format:
-
-{
-  "error": null,
-  "message": "Data generation success",
-  "data": [
-    {
-      "questionText": "string",
-      "questionType": "multiple-choice" | "true-false" | "open-ended" | "multiple-select",
-      "options": [
-        {
-          "text": "Option 1",
-          "isCorrect": true | false
-        },
-        ...
-      ] or null for open-ended
-    },
-    ...
-  ]
-}
-
-Do not include any explanation, formatting, or markdown — only the JSON.
-`;
-
   try {
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text().trim();
+    const { topic } = req.body;
 
-    let parsed;
-    try {
-      parsed = JSON.parse(responseText);
-    } catch (err) {
-      console.error("Failed to parse Gemini response:", err.message);
-      return res.status(500).json({
-        success: false,
-        message: "Invalid JSON format received from Gemini.",
-        data: null
-    });
-    }
-
-    if (parsed.error) {
+    if (!topic) {
       return res.status(400).json({
-        success: false,
-        message: parsed.error,
-        data: []
+        error: true,
+        message: 'Topic is required in request body.',
+        data: null,
       });
     }
 
-    const validQuestions = (parsed.data || []).filter(validateBasicFormat).map(q => ({
-      question: q.questionText,
-      options: q.options?.map(opt => opt.text),
-      correctOption: q.options?.find(opt => opt.isCorrect)?.text || null
-    }));
+    const prompt = `Generate 5 multiple choice questions in JSON format as a string for the topic "${topic}". The output should be in the following format (return it as a string, not an object):
 
-    if (validQuestions.length === 0) {
-      return res.status(500).json({
-        success: false,
-        message: "No valid questions were generated.",
-      });
-    }
+[
+  {
+    "question": "What is ...?",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "answer": "Option B"
+  },
+  ...
+]`;
 
-    return res.status(200).json({
-      success: true,
-      message: `Successfully generated ${validQuestions.length} questions.`,
-      data: validQuestions
+    const response = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        model: 'mistral/mistral-7b-instruct', // You can change this to another like "anthropic/claude-3-haiku" or "meta-llama/llama-3-8b-instruct"
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'http://localhost', // Optional but may be required based on usage
+        },
+      }
+    );
+
+    const rawText = response.data.choices[0]?.message?.content;
+
+    return res.json({
+      error: false,
+      message: 'MCQs generated successfully',
+      data: rawText, // This will be a stringified JSON, you can JSON.parse on frontend
     });
-
   } catch (error) {
-    console.error("Unhandled error:", error.message);
+    console.error('OpenRouter Error:', error.response?.data || error.message);
     return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message
+      error: true,
+      message: 'Failed to generate MCQs using OpenRouter.',
+      data: null,
     });
   }
 };
