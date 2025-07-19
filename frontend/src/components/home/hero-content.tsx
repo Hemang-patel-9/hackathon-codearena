@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Play, Sparkles, Users, Trophy, Brain, ArrowRight } from "lucide-react"
 import { FloatingIcons } from "./floating-icons"
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 export function HeroContent() {
 	const [isVisible, setIsVisible] = useState(false)
+
+	const nav = useNavigate();
 
 	useEffect(() => {
 		setIsVisible(true)

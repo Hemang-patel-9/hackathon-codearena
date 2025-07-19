@@ -50,18 +50,22 @@
 }
 
 @layer base {
+
   /* Custom scrollbar styles */
   ::-webkit-scrollbar {
     width: 12px;
     background: hsl(var(--muted));
   }
+
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
     border-radius: 8px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--accent));
   }
+
   ::-webkit-scrollbar-corner {
     background: hsl(var(--muted));
   }
@@ -168,4 +172,23 @@
   100% {
     transform: translate(50px, 50px);
   }
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.fade-mask {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.fade-mask-y {
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
 }

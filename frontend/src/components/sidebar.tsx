@@ -1,37 +1,54 @@
 "use client"
 
 import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { href, Link, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
 	LayoutDashboard,
 	Receipt,
 	FileText,
-	Users,
-	BarChart3,
-	CreditCard,
 	ChevronLeft,
 	ChevronRight,
 	Home,
+	Icon,
+	User2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/contexts/authContext"
 
 interface SidebarProps {
 	onClose?: () => void
 }
 
-const navigationItems = [
-	{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-	{ name: "Home", href: "/home", icon: Home },
-	{ name: "Quizes", href: "/quiz", icon: Receipt },
-	{ name: "Create", href: "/quiz-creation", icon: FileText },
-	{ name: "Clients", href: "/clients", icon: Users },
-	{ name: "Reports", href: "/reports", icon: BarChart3 },
-	{ name: "Payments", href: "/payments", icon: CreditCard },
-]
-
 export default function Sidebar({ onClose }: SidebarProps) {
+
+	const navigationItemsForUser = [
+		{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+		{ name: "Home", href: "/home", icon: Home },
+		{ name: "Quizes", href: "/Quizes", icon: Receipt },
+		{ name: "Create", href: "/quiz-creation", icon: FileText }
+	]
+
+
+
+	const navigationItemsForAdmin = [
+		{ name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+		{ name: "Quizes", href: "/admin/Quizes", icon: Receipt },
+		{ name: "Users", href: "/admin/Users", icon: User2 },
+		{ name: "Create", href: "/quiz-creation", icon: FileText }
+	]
+
+	const navigationItemsForGuest = [
+		{ name: "Home", href: "/home", icon: Home },
+		{ name: "Login", href: "/login", icon: Lock },
+	];
+	const { user, token } = useAuth();
+
+	const navigationItems = token ? (user?.role === 'admin'
+		? navigationItemsForAdmin
+		: navigationItemsForUser) : navigationItemsForGuest
+
 	const [isExpanded, setIsExpanded] = useState(true)
 	const [hoveredItem, setHoveredItem] = useState<string | null>(null)
 	const location = useLocation()
