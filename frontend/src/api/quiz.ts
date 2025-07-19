@@ -71,3 +71,30 @@ export async function getQuizById(quizId: string, token: string): Promise<Result
 		};
 	}
 }
+
+export const updateQuiz = async (quizId: string, updates: Partial<QuizData>, token: string): Promise<Result> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(updates),
+		})
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`)
+		}
+
+		const data: QuizData = await response.json()
+		return data
+	} catch (error) {
+		console.error("Failed to update quiz:", error)
+		return {
+			message: "Failed to fetch quiz data",
+			error: "Network error",
+			data: null
+		}
+	}
+}

@@ -25,15 +25,18 @@ const scoreboardSchema = new mongoose.Schema({
 				type: Number,
 				default: 0,
 			},
-			averageResponseTime: {
-				type: Number,
-				default: 0,
-			},
 			rank: {
 				type: Number,
 				default: 0,
 				required: true
 			},
+			violations: {
+				type: Number,
+				default: 0
+			},
+			avatar:{
+				type: String
+			}
 		},
 	],
 }, {

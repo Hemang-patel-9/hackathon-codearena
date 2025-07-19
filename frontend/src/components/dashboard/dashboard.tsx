@@ -12,7 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './dashboard-tabs'
 import { format } from 'date-fns';
 import { Clock, Users, Trophy, Calendar, BookOpen, Target } from 'lucide-react';
 import type { Quiz, ParticipatedQuiz, UserQuizData } from '../../types/dashboard'
+import type {QuizData} from '@/types/quiz'
 import { useSocket } from "@/hooks/use-socket";
+import EditQuizModal from "../user-quiz-render/edit-quiz-modal";
+import {updateQuiz} from "@/api/quiz"
 
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -32,6 +35,9 @@ export function Dashboard() {
             website: "",
         },
     });
+    const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null)
+    const [showEditModal, setShowEditModal] = useState(false)
+
     const socket = useSocket();
 
     const navigate = useNavigate();
@@ -88,6 +94,35 @@ export function Dashboard() {
             fetchQuizzes();
         }
     }, [user?._id]);
+
+    const handleEditQuiz = (quiz: QuizData) => {
+        console.log("Editing quiz:", quiz)
+        setSelectedQuiz(quiz)
+        setShowEditModal(true)
+    }
+
+    const handleUpdateQuiz = async (quizId: string, updates: Partial<Quiz>) => {
+        try {
+            const result = await updateQuiz(quizId, updates, token as string)
+            if (!result.success) {
+                throw new Error(result.message)
+            }
+            console.log("Update quiz response:", result.data)
+            setQuizData((prev) => {
+                if (!prev) return prev
+                return {
+                    ...prev,
+                    createdQuizzes: prev.createdQuizzes.map((q) =>
+                        q._id === quizId ? { ...q, ...result.data } : q
+                    ),
+                }
+            })
+            setSelectedQuiz(null)
+            setShowEditModal(false)
+        } catch (error) {
+            console.error("Failed to update quiz:", error)
+        }
+    }
 
     const handleFirstButtonClick = (quizId: string, isCreated: boolean) => {
         if (isCreated) {
@@ -266,7 +301,7 @@ export function Dashboard() {
                     <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg" onClick={() => { handleFirstButtonClick(quiz._id, isCreated) }}>
                         {isCreated ? 'Start Quiz' : 'Review Quiz'}
                     </button>
-                    <button className="w-full px-4 mt-3 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
+                    <button className="w-full px-4 mt-3 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg" onClick={() => handleEditQuiz(quiz)}>
                         {"Edit Quiz"}
                     </button>
                 </div>
@@ -437,6 +472,12 @@ export function Dashboard() {
                         </div>
                     </TabsContent>
                 </Tabs>
+                <EditQuizModal
+                    quiz={selectedQuiz}
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    onUpdate={handleUpdateQuiz}
+                />
             </div>
         </div>
     );

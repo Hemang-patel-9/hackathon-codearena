@@ -161,9 +161,9 @@ const updateQuiz = async (req, res) => {
 
         if (questions !== undefined) {
             const invalidQuestionIds = questions.filter(id => !mongoose.Types.ObjectId.isValid(id));
-            if (invalidQuestionIds.length > 0) {
-                return res.status(400).json({ success: false, message: 'One or more provided question IDs are invalid.' });
-            }
+            // if (invalidQuestionIds.length > 0) {
+            //     return res.status(400).json({ success: false, message: 'One or more provided question IDs are invalid.' });
+            // }
 
             quiz.questions = questions;
             quiz.NoOfQuestion = questions.length;
@@ -179,9 +179,9 @@ const updateQuiz = async (req, res) => {
         if (duration !== undefined) quiz.duration = duration;
         if (participants !== undefined) {
             const invalidParticipantIds = participants.filter(id => !mongoose.Types.ObjectId.isValid(id));
-            if (invalidParticipantIds.length > 0) {
-                return res.status(400).json({ success: false, message: 'One or more provided participant IDs are invalid.' });
-            }
+            // if (invalidParticipantIds.length > 0) {
+            //     return res.status(400).json({ success: false, message: 'One or more provided participant IDs are invalid.' });
+            // }
             quiz.participants = participants;
         }
         if (thumbnail !== undefined) quiz.thumbnail = thumbnail;
@@ -241,7 +241,7 @@ const getUserQuizzes = async (req, res) => {
 
         // Get all quizzes created by the user
         const createdQuizzes = await Quiz.find({ creator: userId })
-            .select('title description status duration schedule participants thumbnail tags createdAt')
+            .select('title description questions passingCriteria timePerQuestion NoOfQuestion visibility password status duration schedule participants thumbnail tags createdAt')
             .populate('participants', 'username email avatar')
             .sort({ createdAt: -1 });
 
