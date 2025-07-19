@@ -1,9 +1,8 @@
 "use client"
 
-import { useRef, useMemo } from "react"
-import { useFrame, useLoader } from "@react-three/fiber"
-import { TextureLoader, type Group } from "three"
-import { FacemeshEyeDefaults, useTexture } from "@react-three/drei"
+import { useRef } from "react"
+import { useFrame } from "@react-three/fiber"
+import { type Group } from "three"
 
 interface CharacterProps {
     shirtStyle: string

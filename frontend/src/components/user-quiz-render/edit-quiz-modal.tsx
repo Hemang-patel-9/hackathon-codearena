@@ -20,10 +20,9 @@ interface EditQuizModalProps {
 }
 
 const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) => {
-    const { user, token } = useAuth()
-    const [activeTab, setActiveTab] = useState("quiz")
+    const { user } = useAuth()
     const [formData, setFormData] = useState({
-        creator: user._id,
+        creator: user?._id,
         title: "",
         description: "",
         questions: [] as string[],
@@ -50,6 +49,7 @@ const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) 
         duration: "",
         schedule: "",
     })
+    const setActiveTab = "quiz";
     const [questionsData, setQuestionsData] = useState<QuestionData[]>([])
     const [questionForm, setQuestionForm] = useState({
         questionText: "",
@@ -74,10 +74,10 @@ const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) 
     useEffect(() => {
         if (quiz) {
             setFormData({
-                creator: user._id,
+                creator: user?._id as string,
                 title: quiz.title || "",
                 description: quiz.description || "",
-                questions: quiz.questions || [],
+                questions: quiz.questions as any || [],
                 NoOfQuestion: quiz.questions?.length || 0,
                 timePerQuestion: quiz.timePerQuestion || 0,
                 passingCriteria: quiz.passingCriteria || 0,
@@ -101,7 +101,7 @@ const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) 
                 duration: "",
                 schedule: "",
             })
-            fetchQuestions(quiz.questions)
+            fetchQuestions(quiz.questions as any)
         }
     }, [quiz])
 
@@ -225,23 +225,23 @@ const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) 
             creator: formData.creator,
             title: formData.title,
             description: formData.description,
-            questions: formData.questions,
+            questions: formData.questions as any,
             NoOfQuestion: formData.questions.length,
             timePerQuestion: formData.timePerQuestion,
             passingCriteria: formData.passingCriteria,
             questionOrder: formData.questionOrder,
             visibility: formData.visibility,
             password: formData.visibility === "password-protected" ? formData.password : undefined,
-            status: formData.status,
+            status: formData.status as string,
             duration: formData.duration,
             participants: formData.participants,
             thumbnail: formData.thumbnail || undefined,
             tags: formData.tags,
-            schedule: formData.schedule,
+            schedule: formData.schedule as any
         }
 
         try {
-            await onUpdate(quiz!._id, updates)
+            await onUpdate(quiz?._id as string, updates)
             onClose()
         } catch (error) {
             console.error("Failed to update quiz:", error)
@@ -310,7 +310,7 @@ const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) 
                 ],
             multimedia: question.multimedia || { type: "image", url: "" },
         })
-        setEditingQuestionId(question._id)
+        setEditingQuestionId(question?._id as string)
     }
 
     const handleDeleteQuestion = async (questionId: string) => {
@@ -388,7 +388,7 @@ const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) 
                             </motion.button>
                         </div>
 
-                        <Tabs defaultValue="quiz" className="w-full" onValueChange={setActiveTab}>
+                        <Tabs defaultValue="quiz" className="w-full" onValueChange={setActiveTab as any}>
                             <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted border border-border rounded-xl p-1">
                                 <TabsTrigger
                                     value="quiz"
@@ -975,7 +975,7 @@ const EditQuizModal = ({ quiz, isOpen, onClose, onUpdate }: EditQuizModalProps) 
                                                                 <motion.button
                                                                     whileHover={{ scale: 1.05 }}
                                                                     whileTap={{ scale: 0.95 }}
-                                                                    onClick={() => handleDeleteQuestion(question._id)}
+                                                                    onClick={() => handleDeleteQuestion(question?._id as string)}
                                                                     className="p-2 text-destructive hover:bg-destructive/10 rounded-full transition-colors"
                                                                 >
                                                                     <Trash2 size={16} />

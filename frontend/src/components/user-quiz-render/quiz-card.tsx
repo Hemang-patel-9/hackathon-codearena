@@ -1,4 +1,4 @@
-import { Quiz } from '../../types/quizComponent';
+import { type Quiz } from '@/types/quizComponent';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../dashboard/dashboard-card';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button'; // Assuming a Button component from a UI library

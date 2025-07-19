@@ -9,31 +9,24 @@ import { useAuth } from "@/contexts/authContext"
 import type { Result } from "@/types/response"
 import { getUserAnalytics, getQuizAnalytics } from "@/api/analytics"
 import type { QuizAnalyticsData, UserAnalyticsData } from '@/types/analytics';
+import { console } from "inspector/promises"
 
 export function HeroSection() {
 
 	const { token } = useAuth();
-	const [loading, setLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
 	const [quizAnalytics, setQuizAnalytics] = useState<QuizAnalyticsData[]>([]);
 	const [userAnalytics, setUserAnalytics] = useState<UserAnalyticsData[]>([]);
 
 	useEffect(() => {
 		const fetchQuizzes = async () => {
-			setLoading(true);
-			setError(null);
 			try {
 				const response: Result = await getQuizAnalytics();
 				setQuizAnalytics(response.data || []);
-				if (response.error) setError(response.error);
 				const responseUser: Result = await getUserAnalytics();
 				setUserAnalytics(responseUser.data || []);
-				if (responseUser.error) setError(responseUser.error);
 			}
-			catch {
-				setError('Failed to fetch quizzes. Please try again later.');
-			} finally {
-				setLoading(false);
+			catch (error) {
+				console.error(error);
 			}
 		};
 

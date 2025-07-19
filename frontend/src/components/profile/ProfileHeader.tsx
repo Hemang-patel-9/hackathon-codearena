@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion';
-import { AlertCircle, Calendar, Camera, CheckCircle, Settings } from 'lucide-react';
+import { AlertCircle, Calendar, Camera, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import type { User } from '@/types/user';

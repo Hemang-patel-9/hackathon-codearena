@@ -31,7 +31,7 @@ const UserManagement = () => {
             setLoading(true)
             setError(null)
             try {
-                const response: Result = await fetchAllUsersWithQuizzes(token)
+                const response: Result = await fetchAllUsersWithQuizzes(token as string)
                 if (response.error) {
                     throw new Error(response.message)
                 }
@@ -52,7 +52,7 @@ const UserManagement = () => {
 
     const handleUpdateUser = async (userId: string, updates: Partial<User>) => {
         try {
-            const result = await updateUser(userId, updates, token)
+            const result = await updateUser(userId, updates, token as string)
             if (result.error) {
                 throw new Error(result.message)
             }
@@ -82,7 +82,7 @@ const UserManagement = () => {
 
     const handleDeleteUser = async (userId: string) => {
         try {
-            const result = await deleteUser(userId, token)
+            const result = await deleteUser(userId, token as string)
             if (result.error) {
                 throw new Error(result.message)
             }
@@ -96,7 +96,7 @@ const UserManagement = () => {
 
     const handleViewUser = async (user: User) => {
         try {
-            const result = await getUserDetailsWithQuizzes(user._id, token)
+            const result = await getUserDetailsWithQuizzes(user._id, token as string)
             if (result.error) {
                 throw new Error(result.message)
             }
@@ -172,10 +172,10 @@ const UserManagement = () => {
 
                 <motion.div variants={itemVariants}>
                     <UserGrid
-                        users={filteredUsers}
-                        onView={handleViewUser}
-                        onEdit={handleEditUser}
-                        onDelete={handleDeleteClick}
+                        users={filteredUsers as any}
+                        onView={handleViewUser as any}
+                        onEdit={handleEditUser as any}
+                        onDelete={handleDeleteClick as any}
                     />
                 </motion.div>
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import ProfileHeader from "../profile/ProfileHeader"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/authContext"
-import type { ProfileFormData, User as UserProfile } from "@/types/user"
+import type { User as UserProfile } from "@/types/user"
 import { getUserById } from "@/api/user"
 import type { Result } from "@/types/response"
 import { Card, CardContent, CardTitle, CardDescription } from "./dashboard-card"
@@ -26,16 +26,16 @@ export function Dashboard() {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [quizData, setQuizData] = useState<UserQuizData | null>(null)
-    const [profileData, setProfileData] = useState<ProfileFormData>({
-        username: "",
-        bio: "",
-        socialLinks: {
-            github: "",
-            linkedin: "",
-            twitter: "",
-            website: "",
-        },
-    });
+    // const [profileData, setProfileData] = useState<ProfileFormData>({
+    //     username: "",
+    //     bio: "",
+    //     socialLinks: {
+    //         github: "",
+    //         linkedin: "",
+    //         twitter: "",
+    //         website: "",
+    //     },
+    // });
     const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null)
     const [showEditModal, setShowEditModal] = useState(false)
 
@@ -59,11 +59,11 @@ export function Dashboard() {
             const result: Result = await getUserById(user?._id as string, token as string)
             console.log(result)
             setUserProfile(result.data)
-            setProfileData({
-                username: result.data.username || "",
-                bio: result.data.bio,
-                socialLinks: result.data.socialLinks,
-            })
+            // setProfileData({
+            //     username: result.data.username || "",
+            //     bio: result.data.bio,
+            //     socialLinks: result.data.socialLinks,
+            // })
         } catch (error) {
             console.error("Failed to load profile:", error)
         } finally {
@@ -96,7 +96,7 @@ export function Dashboard() {
 
     const handleEditQuiz = (quiz: QuizData) => {
         console.log("Editing quiz:", quiz)
-        setSelectedQuiz(quiz)
+        // setSelectedQuiz(quiz)
         setShowEditModal(true)
     }
 
@@ -161,7 +161,6 @@ export function Dashboard() {
         quiz,
         isCreated = false,
         scoreDetails = null,
-        participatedAt = null,
     }: {
         quiz: Quiz
         isCreated?: boolean
@@ -215,7 +214,7 @@ export function Dashboard() {
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
                     <button className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 transform hover:scale-110">
                         <Edit className="w-5 h-5 text-white" onClick={() => {
-                            handleEditQuiz(quiz)
+                            handleEditQuiz(quiz as any)
                         }} />
                     </button>
                 </div>

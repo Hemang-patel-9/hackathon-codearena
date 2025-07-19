@@ -12,7 +12,7 @@ interface LoaderProps {
 	theme?: "light" | "dark" | "auto"
 }
 
-export function Loader({ variant = "default", size = "md", text, className, theme = "auto" }: LoaderProps) {
+export function Loader({ variant = "default", size = "md", text, className }: LoaderProps) {
 	const sizeClasses = {
 		sm: "w-6 h-6",
 		md: "w-8 h-8",

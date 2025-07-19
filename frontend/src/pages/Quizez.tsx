@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Clock, Users, Trophy, Star, Search, Filter, Calendar, TrendingUp, BookOpen, Play } from 'lucide-react'
+import { Clock, Trophy, Star, Search, Filter, Calendar, TrendingUp, BookOpen, Play } from 'lucide-react'
 
 // Mock data types
 interface Quiz {

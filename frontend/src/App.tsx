@@ -18,7 +18,7 @@ import QuizExplorer from "./pages/UserQuizRender"
 import { SocketProvider } from "./contexts/socketContext"
 import StartExam from "./pages/StartExam"
 import MonitoringPage from "./pages/MonitoringPage"
-import AdminDashboard from "./pages/Admin/AdminDashboard"
+// import AdminDashboard from "./pages/Admin/AdminDashboard"
 import UserManagement from "./pages/Admin/UserManagement"
 import CharacterCustomizer from "./pages/CharacterCustomizer"
 

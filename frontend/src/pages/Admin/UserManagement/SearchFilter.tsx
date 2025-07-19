@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Search, Filter } from "lucide-react"
+import { Search} from "lucide-react"
 
 interface SearchFilterProps {
     searchTerm: string

@@ -32,6 +32,7 @@ export function CreateQuizPage() {
 		questionOrder: "random",
 		visibility: "public",
 		password: "",
+		status: "upcoming",
 		schedule: new Date(),
 		questions: [],
 	}

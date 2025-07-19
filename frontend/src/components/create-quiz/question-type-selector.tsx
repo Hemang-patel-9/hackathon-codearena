@@ -4,8 +4,7 @@ import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X, CheckSquare, Square, ToggleLeft, FileText } from 'lucide-react'
-import type { QuestionData } from "@/types/quiz"
-
+import type { QuestionData } from "@/types/question"
 interface QuestionTypeSelectorProps {
 	onSelect: (type: QuestionData["questionType"]) => void
 	onClose: () => void

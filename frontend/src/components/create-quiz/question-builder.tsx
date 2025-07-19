@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, HelpCircle, FileText, Download, Upload, Sparkles, X, Tags, Hash } from "lucide-react"
+import { Plus, HelpCircle, FileText, Download, Upload, Sparkles, X, Tags } from "lucide-react"
 import type { QuizData } from "@/types/quiz"
 import type { QuestionData } from "@/types/question"
 import { QuestionCard } from "./question-card"
@@ -23,7 +23,6 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 	const [showCsvOptions, setShowCsvOptions] = useState(false)
 	const [showAiGenerator, setShowAiGenerator] = useState(false)
 	const [aiTags, setAiTags] = useState("")
-	const [aiQuestionCount, setAiQuestionCount] = useState("")
 	const { token } = useAuth()
 
 	const addQuestion = (type: QuestionData["questionType"]) => {
@@ -169,7 +168,6 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 
 			setShowAiGenerator(false);
 			setAiTags("");
-			setAiQuestionCount("");
 		} catch (error) {
 			console.error("Error fetching AI questions:", error);
 		}

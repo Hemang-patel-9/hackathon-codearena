@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { XCircle, Activity, TrendingUp, Star, CheckCircle, Users, Shield, Calendar } from "lucide-react"
+import { XCircle, TrendingUp, Star, CheckCircle, Users, Shield } from "lucide-react"
 import type { User } from "./types"
 
 interface UserDetailsModalProps {
@@ -66,7 +66,7 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
     // Calculate totalQuizzes and averageScore from recentQuizzes
     const totalQuizzes = user.recentQuizzes?.length || 0
     const averageScore = user.recentQuizzes && user.recentQuizzes.length > 0
-        ? user.recentQuizzes.reduce((sum, quiz) => sum + (quiz.score?.score || 0), 0) / user.recentQuizzes.length
+        ? user.recentQuizzes.reduce((sum, quiz:any) => sum + (quiz.score?.score || 0), 0) / user.recentQuizzes.length
         : 0
 
     return (
@@ -181,7 +181,7 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
                                     </h4>
                                     <div className="space-y-3">
                                         {user.recentQuizzes && user.recentQuizzes.length > 0 ? (
-                                            user.recentQuizzes.map((quiz, index) => (
+                                            user.recentQuizzes.map((quiz:any, index) => (
                                                 <motion.div
                                                     key={index}
                                                     initial={{ opacity: 0, y: 10 }}

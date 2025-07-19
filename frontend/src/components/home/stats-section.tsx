@@ -66,6 +66,7 @@ export function StatsSection({ quizAnalytics, userAnalytics }: any) {
 	}, [])
 
 	const animateCounter = (key: string, target: number) => {
+		console.log(key);
 		let current = 0
 		const increment = target / 100
 		const timer = setInterval(() => {
@@ -74,7 +75,7 @@ export function StatsSection({ quizAnalytics, userAnalytics }: any) {
 				current = target
 				clearInterval(timer)
 			}
-			setCounts((prev) => ({ ...prev, [key]: Math.floor(current) }))
+			// setCounts((prev:any) => ({ ...prev, [key]: Math.floor(current) }))
 		}, 20)
 	}
 

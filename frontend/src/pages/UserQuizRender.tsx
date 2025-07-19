@@ -6,7 +6,6 @@ import QuizCard from '@/components/user-quiz-render/quiz-card';
 import type { Result } from '../types/response';
 import { useAuth } from '@/contexts/authContext';
 import { Badge } from '@/components/dashboard/dashboard-badge';
-import { BookOpen } from 'lucide-react';
 
 export default function UserQuizRender() {
     const [activeTab, setActiveTab] = useState<'private' | 'public'>('public');
@@ -23,7 +22,7 @@ export default function UserQuizRender() {
             setError(null);
             try {
                 if (activeTab === 'private') {
-                    const response: Result = await fetchPrivateQuizzes(token, user?._id);
+                    const response: Result = await fetchPrivateQuizzes(token as string, user?._id as string);
                     setPrivateQuizzes(response.data || []);
                     if (response.error) setError(response.error);
                 } else {

@@ -1,7 +1,7 @@
 import type { QuestionData } from "./question"
 
 export interface QuizData {
-	_id: string
+	_id?: string
 	creator: string
 	title: string
 	description: string
@@ -15,6 +15,7 @@ export interface QuizData {
 	questionOrder: "random" | "fixed"
 	visibility: "public" | "private" | "password-protected"
 	password: string
+	status: any
 	schedule: Date
 	questions: QuestionData[]
 }
