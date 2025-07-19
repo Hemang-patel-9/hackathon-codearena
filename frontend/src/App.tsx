@@ -18,6 +18,8 @@ import QuizExplorer from "./pages/Quizez"
 import AdminDashboard from "./pages/Admin/AdminDashboard"
 import UserManagement from "./pages/Admin/UserManagement"
 import StartExam from "./pages/StartExam"
+import { QuizLoader } from "./components/loaders/QuizLoader"
+import { CSVProcessingLoader } from "./components/loaders/CSVProcessingLoader"
 
 export default function App() {
   return (
@@ -44,6 +46,8 @@ export default function App() {
                   <Route path="/otp" element={<OtpPage />} />
                   <Route path="/github-success" element={<GitHubSuccess />} />
                   <Route path="*" element={<NotFound />} />
+
+                  <Route path="/loade" element={<QuizLoader />} />
                 </Routes>
               </Layout>
             </Router>
