@@ -1,12 +1,45 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { AnimatedBackground } from "@/components/home/animated-background"
 import { HeroContent } from "@/components/home/hero-content"
 import { FeatureCards } from "@/components/home/feature-cards"
 import { StatsSection } from "@/components/home/stats-section"
+import { useAuth } from "@/contexts/authContext"
+import type { Result } from "@/types/response"
+import { getUserAnalytics, getQuizAnalytics } from "@/api/analytics"
+import type { QuizAnalyticsData, UserAnalyticsData } from '@/types/analytics';
 
 export function HeroSection() {
+
+	const { token } = useAuth();
+	const [loading, setLoading] = useState<boolean>(false);
+	const [error, setError] = useState<string | null>(null);
+	const [quizAnalytics, setQuizAnalytics] = useState<QuizAnalyticsData[]>([]);
+	const [userAnalytics, setUserAnalytics] = useState<UserAnalyticsData[]>([]);
+
+	useEffect(() => {
+		const fetchQuizzes = async () => {
+			setLoading(true);
+			setError(null);
+			try {
+				const response: Result = await getQuizAnalytics(token);
+				setQuizAnalytics(response.data || []);
+				if (response.error) setError(response.error);
+				const responseUser: Result = await getUserAnalytics(token);
+				setUserAnalytics(responseUser.data || []);
+				if (responseUser.error) setError(responseUser.error);
+			}
+			catch {
+				setError('Failed to fetch quizzes. Please try again later.');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchQuizzes();
+	}, [token]);
+
 	useEffect(() => {
 		// Initialize scroll animations
 		const observerOptions = {
@@ -31,7 +64,7 @@ export function HeroSection() {
 			const scrolled = window.pageYOffset
 			const parallaxElements = document.querySelectorAll(".parallax")
 
-			parallaxElements.forEach((element:any) => {
+			parallaxElements.forEach((element: any) => {
 				const speed = element.getAttribute("data-speed") || "0.5"
 				const yPos = -(scrolled * Number.parseFloat(speed))
 				element.style.transform = `translateY(${yPos}px)`
@@ -53,7 +86,7 @@ export function HeroSection() {
 			{/* Main Hero Content */}
 			<div className="relative z-10 container mx-auto px-4 py-20">
 				<HeroContent />
-				<StatsSection />
+				<StatsSection quizAnalytics={quizAnalytics} userAnalytics={userAnalytics} />
 				<FeatureCards />
 			</div>
 		</section>
