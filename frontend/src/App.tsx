@@ -36,7 +36,7 @@ export default function App() {
                   <Route path="/quiz" element={<QuizExplorer />} />
                   <Route path="/quiz/monitoring/:quizId" element={<MonitoringPage />} />
                   <Route path="/admin" element={<Navigate to={"/admin/dashboard"} />} />
-                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/dashboard" element={<Dashboard />} />
                   <Route path="/admin/Users" element={<UserManagement />} />
                   <Route path="/home" element={<HeroSection />} />
                   <Route path="/login" element={<LoginPage />} />

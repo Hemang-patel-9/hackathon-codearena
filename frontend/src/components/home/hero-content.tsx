@@ -5,9 +5,11 @@ import { Play, Sparkles, Users, Trophy, Brain, ArrowRight } from "lucide-react"
 import { FloatingIcons } from "./floating-icons"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/contexts/authContext"
 
 export function HeroContent() {
 	const [isVisible, setIsVisible] = useState(false)
+	const { token } = useAuth()
 
 	const nav = useNavigate();
 
@@ -16,7 +18,7 @@ export function HeroContent() {
 	}, [])
 
 	return (
-		<div className="text-center max-w-6xl mx-auto relative">
+		<div className="text-center max-w-6xl mb-7 mx-auto relative">
 			<FloatingIcons />
 
 			{/* Badge with enhanced animation */}
@@ -60,6 +62,9 @@ export function HeroContent() {
 				className={`flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 transition-all duration-1000 delay-900 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
 			>
 				<Button
+					onClick={() => {
+						token ? nav('/quiz') : nav('/login')
+					}}
 					size="lg"
 					className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-2xl transform hover:scale-110 transition-all duration-300 group relative overflow-hidden"
 				>
