@@ -62,7 +62,7 @@ const MonitoringPage = () => {
 	}
 
 	const handleEndExam = () => {
-		console.log("--")
+		socket?.emit("creator:end-quiz", { quizId: params.quizId })
 	}
 
 	const getViolationBadge = (violations = 0) => {

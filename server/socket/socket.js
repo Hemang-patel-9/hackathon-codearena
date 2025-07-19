@@ -106,6 +106,13 @@ const initializeSocket = (server) => {
 			socket.emit("creator:live-data", leaderboard);
 		});
 
+		socket.on("creator:end-quiz", ({ quizId }) => {
+			const quiz = room[quizId];
+			if (!quiz) return;
+			console.log(`🏁 Quiz ended: ${quiz.participants}`);
+
+		});
+
 		// 🔸 Handle disconnect
 		socket.on("disconnect", () => {
 			online = Math.max(0, online - 1);
