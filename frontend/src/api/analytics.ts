@@ -5,13 +5,12 @@ const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 
 // Fetch Quiz Analytics
-export async function getQuizAnalytics(token: string): Promise<Result> {
+export async function getQuizAnalytics(): Promise<Result> {
     try {
         const response = await fetch(`${API_BASE_URL}/analytics/quizanalysis`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
         });
 
@@ -27,13 +26,12 @@ export async function getQuizAnalytics(token: string): Promise<Result> {
 }
 
 // Fetch User Analytics
-export async function getUserAnalytics(token: string): Promise<Result> {
+export async function getUserAnalytics(): Promise<Result> {
     try {
         const response = await fetch(`${API_BASE_URL}/analytics/useranalysis`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
         });
 

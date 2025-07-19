@@ -23,10 +23,10 @@ export function HeroSection() {
 			setLoading(true);
 			setError(null);
 			try {
-				const response: Result = await getQuizAnalytics(token);
+				const response: Result = await getQuizAnalytics();
 				setQuizAnalytics(response.data || []);
 				if (response.error) setError(response.error);
-				const responseUser: Result = await getUserAnalytics(token);
+				const responseUser: Result = await getUserAnalytics();
 				setUserAnalytics(responseUser.data || []);
 				if (responseUser.error) setError(responseUser.error);
 			}
