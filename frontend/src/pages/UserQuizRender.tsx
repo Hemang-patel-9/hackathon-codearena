@@ -9,7 +9,7 @@ import { Badge } from '@/components/dashboard/dashboard-badge';
 import { BookOpen } from 'lucide-react';
 
 export default function UserQuizRender() {
-    const [activeTab, setActiveTab] = useState<'private' | 'public'>('private');
+    const [activeTab, setActiveTab] = useState<'private' | 'public'>('public');
     const [privateQuizzes, setPrivateQuizzes] = useState<Quiz[]>([]);
     const [publicQuizzes, setPublicQuizzes] = useState<Quiz[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
