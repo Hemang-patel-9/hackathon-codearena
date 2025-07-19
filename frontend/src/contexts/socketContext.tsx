@@ -2,18 +2,18 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './authContext';
 
-interface ServerToClientEvents {
-	// Define incoming socket events if needed
-	'active-users': (users: { userId: string; username: string }[]) => void;
-}
+// interface ServerToClientEvents {
+// 	// Define incoming socket events if needed
+// 	'active-users': (users: { userId: string; username: string }[]) => void;
+// }
 
-interface ClientToServerEvents {
-	'register-user': (data: { userId: string; username: string }) => void;
-	'get-active-users': () => void;
+// interface ClientToServerEvents {
+// 	'register-user': (data: { userId: string; username: string }) => void;
+// 	'get-active-users': () => void;
 	
-}
+// }
 
-type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
+type TypedSocket = Socket<any,any>;
 
 export const SocketContext = createContext<TypedSocket | null>(null);
 
