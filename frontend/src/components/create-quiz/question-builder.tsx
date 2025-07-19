@@ -70,16 +70,81 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 	}
 
 	const handleCsvDownload = () => {
-		// CSV download logic here
-		console.log("Downloading CSV...")
-		setShowCsvOptions(false)
+		const link = document.createElement("a");
+		link.href = "cvs_format.csv";
+		link.download = "question-template.csv";
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		setShowCsvOptions(false);
+	};
+
+	function parseCsv(csvText: string): QuestionData[] {
+		const lines = csvText.trim().split("\n").filter(line => line.trim() !== "")
+		const questions: QuestionData[] = []
+
+		for (let i = 1; i < lines.length; i++) {
+			const cols = lines[i].split(",")
+
+			const questionText = cols[0]?.trim()
+			const questionType = cols[1]?.trim() as QuestionData["questionType"]
+
+			if (!questionText || !questionType) continue
+
+			let options: QuestionData["options"] = []
+
+			if (questionType === "open-ended") {
+				options = []
+			} else if (["multiple-choice", "multiple-select", "true-false"].includes(questionType)) {
+				for (let j = 2; j < cols.length; j += 2) {
+					const text = cols[j]?.trim()
+					const isCorrect = cols[j + 1]?.trim().toLowerCase() === "true"
+					if (text) options.push({ text, isCorrect })
+				}
+			}
+
+			questions.push({
+				questionText,
+				questionType,
+				options
+			})
+		}
+
+		return questions
 	}
 
+
 	const handleCsvUpload = () => {
-		// CSV upload logic here
-		console.log("Uploading CSV...")
-		setShowCsvOptions(false)
+		const input = document.createElement("input")
+		input.type = "file"
+		input.accept = ".csv"
+
+		input.onchange = async (event: any) => {
+			const file = event.target.files?.[0]
+			if (!file) return
+
+			const text = await file.text()
+			try {
+				const parsedQuestions = parseCsv(text)
+
+				if (parsedQuestions.length === 0) {
+					alert("No valid questions found.")
+					return
+				}
+
+				updateQuizData({
+					questions: [...quizData.questions, ...parsedQuestions],
+				})
+			} catch (error) {
+				console.error("Error parsing CSV:", error)
+				alert("Invalid CSV format.")
+			}
+			setShowCsvOptions(false)
+		}
+
+		input.click()
 	}
+
 
 	const handleAiGenerate = () => {
 		// AI generation logic here

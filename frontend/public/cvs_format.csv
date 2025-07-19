@@ -1,0 +1,5 @@
+questionText,questionType,option1,option1_isCorrect,option2,option2_isCorrect,option3,option3_isCorrect,option4,option4_isCorrect,
+what is 1+1?,multiple-choice,2,true,3,false,4,false,5,false,
+What is called father?,multiple-select,dad,true,papa,true,maa,false,grand father,false,
+Darshan is a very good university?,true-false,True,false,False,true,,,,
+What is Generative-AI?,open-ended,,,,,,,,
