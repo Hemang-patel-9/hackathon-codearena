@@ -96,7 +96,7 @@ export function Dashboard() {
 
     const handleEditQuiz = (quiz: QuizData) => {
         console.log("Editing quiz:", quiz)
-        // setSelectedQuiz(quiz)
+        setSelectedQuiz(quiz as any)
         setShowEditModal(true)
     }
 
