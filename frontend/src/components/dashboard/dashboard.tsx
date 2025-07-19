@@ -41,8 +41,8 @@ export function Dashboard() {
     useEffect(() => {
         if (!token) {
             navigate("/");
+            return;
         }
-
         loadUserProfile();
     }, [])
 
@@ -122,11 +122,10 @@ export function Dashboard() {
         return 'text-gray-600 dark:text-gray-400';
     };
 
-    const QuizCard = ({ quiz, isCreated = false, scoreDetails = null, participatedAt = null }: {
+    const QuizCard = ({ quiz, isCreated = false, scoreDetails = null }: {
         quiz: Quiz;
         isCreated?: boolean;
         scoreDetails?: ParticipatedQuiz['scoreDetails'] | null;
-        participatedAt?: Date | null;
     }) => (
         <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 h-full flex flex-col">
             {/* Header Section with Thumbnail */}
@@ -416,7 +415,6 @@ export function Dashboard() {
                                                 quiz={participatedQuiz.quiz}
                                                 isCreated={false}
                                                 scoreDetails={participatedQuiz.scoreDetails}
-                                                participatedAt={participatedQuiz.participatedAt}
                                             />
                                         </div>
                                     ))}

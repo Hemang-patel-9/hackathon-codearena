@@ -30,7 +30,8 @@ export default function App() {
             <Router>
               <Layout>
                 <Routes>
-                  <Route path="/" element={<Navigate to="/dashboard" />} />
+                  <Route path="/" element={<Navigate to="/home" />} />
+                  {/* <Route path="/" element={<Navigate to="/dashboard" />} /> */}
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/quiz" element={<QuizExplorer />} />
                   <Route path="/quiz/monitoring/:quizId" element={<MonitoringPage />} />
@@ -38,7 +39,6 @@ export default function App() {
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
                   <Route path="/admin/Users" element={<UserManagement />} />
 
-                  <Route path="/" element={<Navigate to="/home" />} />
                   <Route path="/home" element={<HeroSection />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/start/:quizId" element={<StartExam />} />

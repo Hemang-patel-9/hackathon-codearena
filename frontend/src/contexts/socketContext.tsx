@@ -28,7 +28,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
 	useEffect(() => {
 		if (!user?._id) return;
-
 		const socket: TypedSocket = io(import.meta.env.VITE_APP_SOCKET_URL, {
 			transports: ['websocket'],
 		});
