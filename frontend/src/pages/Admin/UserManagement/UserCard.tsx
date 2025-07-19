@@ -77,7 +77,7 @@ const UserCard = ({ user, index, onView, onEdit, onDelete }: UserCardProps) => {
                     <motion.img
                         whileHover={{ scale: 1.1 }}
                         className="w-12 h-12 rounded-full border-2 border-purple-200"
-                        src={`${import.meta.env.VITE_APP_API_URL}${user.avatar}` || "/placeholder.svg?height=48&width=48"}
+                        src={`${import.meta.env.VITE_APP_API_URL}/${user.avatar}`}
                         alt={user.username}
                     />
                     <div className="min-w-0 flex-1">
