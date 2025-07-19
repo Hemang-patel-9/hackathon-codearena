@@ -17,6 +17,7 @@ import { SocketProvider } from "./contexts/socketContext"
 import QuizExplorer from "./pages/Quizez"
 import AdminDashboard from "./pages/Admin/AdminDashboard"
 import UserManagement from "./pages/Admin/UserManagement"
+import StartExam from "./pages/StartExam"
 
 export default function App() {
   return (
@@ -34,6 +35,8 @@ export default function App() {
                   <Route path="/" element={<Navigate to="/home" />} />
                   <Route path="/home" element={<HeroSection />} />
                   <Route path="/login" element={<LoginPage />} />
+                  <Route path="/quizzes" element={<QuizExplorer />} />
+                  <Route path="/start" element={<StartExam />} />
                   <Route path="/quiz-creation" element={<CreateQuizPage />} />
                   <Route path="/quizes" element={<QuizExplorer />} />
                   <Route path="/profile" element={<ProfilePage />} />
