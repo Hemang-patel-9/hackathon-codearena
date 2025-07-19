@@ -23,7 +23,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
 	const navigationItems = [
 		{ name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-		{ name: "Quizes", href: "/admin/Quizes", icon: Receipt },
+		// { name: "Quizes", href: "/admin/Quizes", icon: Receipt },
 		{ name: "Users", href: "/admin/Users", icon: User2 },
 		{ name: "Create", href: "/quiz-creation", icon: FileText }
 	]

@@ -70,24 +70,111 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 	}
 
 	const handleCsvDownload = () => {
-		// CSV download logic here
-		console.log("Downloading CSV...")
-		setShowCsvOptions(false)
+		const link = document.createElement("a");
+		link.href = "cvs_format.csv";
+		link.download = "question-template.csv";
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		setShowCsvOptions(false);
+	};
+
+	function parseCsv(csvText: string): QuestionData[] {
+		const lines = csvText.trim().split("\n").filter(line => line.trim() !== "")
+		const questions: QuestionData[] = []
+
+		for (let i = 1; i < lines.length; i++) {
+			const cols = lines[i].split(",")
+
+			const questionText = cols[0]?.trim()
+			const questionType = cols[1]?.trim() as QuestionData["questionType"]
+
+			if (!questionText || !questionType) continue
+
+			let options: QuestionData["options"] = []
+
+			if (questionType === "open-ended") {
+				options = []
+			} else if (["multiple-choice", "multiple-select", "true-false"].includes(questionType)) {
+				for (let j = 2; j < cols.length; j += 2) {
+					const text = cols[j]?.trim()
+					const isCorrect = cols[j + 1]?.trim().toLowerCase() === "true"
+					if (text) options.push({ text, isCorrect })
+				}
+			}
+
+			questions.push({
+				questionText,
+				questionType,
+				options
+			})
+		}
+
+		return questions
 	}
+
 
 	const handleCsvUpload = () => {
-		// CSV upload logic here
-		console.log("Uploading CSV...")
-		setShowCsvOptions(false)
+		const input = document.createElement("input")
+		input.type = "file"
+		input.accept = ".csv"
+
+		input.onchange = async (event: any) => {
+			const file = event.target.files?.[0]
+			if (!file) return
+
+			const text = await file.text()
+			try {
+				const parsedQuestions = parseCsv(text)
+
+				if (parsedQuestions.length === 0) {
+					alert("No valid questions found.")
+					return
+				}
+
+				updateQuizData({
+					questions: [...quizData.questions, ...parsedQuestions],
+				})
+			} catch (error) {
+				console.error("Error parsing CSV:", error)
+				alert("Invalid CSV format.")
+			}
+			setShowCsvOptions(false)
+		}
+
+		input.click()
 	}
 
-	const handleAiGenerate = () => {
-		// AI generation logic here
-		console.log("Generating questions with AI:", { tags: aiTags, count: aiQuestionCount })
-		setShowAiGenerator(false)
-		setAiTags("")
-		setAiQuestionCount("")
-	}
+	const handleAiGenerate = async () => {
+		showAiGenerator
+		try {
+			const response = await fetch("http://localhost:5678/webhook-test/generate", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					topic: aiTags,
+					sessionId: "a",
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error(`Server responded with status ${response.status}`);
+			}
+
+			const result = await response.json();
+			console.log("AI-Agent Response:", result.output);
+			updateQuizData({ questions: result.output.data});
+
+			setShowAiGenerator(false);
+			setAiTags("");
+			setAiQuestionCount("");
+		} catch (error) {
+			console.error("Error fetching AI questions:", error);
+		}
+	};
+
 
 	return (
 		<motion.div
@@ -107,7 +194,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 							>
 								<HelpCircle className="w-6 h-6 text-purple-500" />
 							</motion.div>
-							Questions ({quizData.questions.length})
+							Questions ({quizData.questions?.length?? 0})
 						</div>
 						<div className="flex items-center gap-2">
 							<Button
@@ -140,7 +227,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 
 			{/* Questions List */}
 			<AnimatePresence>
-				{quizData.questions.map((question, index) => (
+				{Array.isArray(quizData.questions) && quizData.questions.map((question, index) => (
 					<motion.div
 						key={index}
 						initial={{ opacity: 0, y: 20 }}
@@ -161,7 +248,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 			</AnimatePresence>
 
 			{/* Empty State */}
-			{quizData.questions.length === 0 && (
+			{quizData.questions?.length === 0 && (
 				<motion.div
 					initial={{ opacity: 0, scale: 0.9 }}
 					animate={{ opacity: 1, scale: 1 }}
@@ -290,7 +377,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 											className="border-blue-200 dark:border-blue-800 focus:border-blue-500 focus:ring-blue-500"
 										/>
 									</div>
-									<div className="space-y-2">
+									{/* <div className="space-y-2">
 										<Label
 											htmlFor="questionCount"
 											className="text-sm font-medium text-foreground flex items-center gap-2"
@@ -308,14 +395,14 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 											onChange={(e) => setAiQuestionCount(e.target.value)}
 											className="border-blue-200 dark:border-blue-800 focus:border-blue-500 focus:ring-blue-500"
 										/>
-									</div>
+									</div> */}
 									<div className="flex gap-2 pt-2">
 										<Button onClick={() => setShowAiGenerator(false)} variant="outline" className="flex-1">
 											Cancel
 										</Button>
 										<Button
 											onClick={handleAiGenerate}
-											disabled={!aiTags.trim() || !aiQuestionCount.trim()}
+											disabled={!aiTags.trim()}
 											className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
 										>
 											<Sparkles className="w-4 h-4 mr-2" />

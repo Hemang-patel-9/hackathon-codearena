@@ -17,10 +17,7 @@ initializeSocket(server);
 
 // Middleware
 app.use("/media", express.static("media"));
-app.use(cors({
-	origin:"*",
-	methods:["GET","POST","PUT","PATCH","DELETE"]
-}));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

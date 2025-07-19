@@ -18,7 +18,7 @@ export function HeroContent() {
 	}, [])
 
 	return (
-		<div className="text-center max-w-6xl mx-auto relative">
+		<div className="text-center max-w-6xl mb-7 mx-auto relative">
 			<FloatingIcons />
 
 			{/* Badge with enhanced animation */}

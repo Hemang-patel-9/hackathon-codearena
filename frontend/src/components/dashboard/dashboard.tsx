@@ -15,6 +15,9 @@ import { format } from "date-fns"
 import { Clock, Users, Trophy, Calendar, BookOpen, Target, Eye, Play, Edit } from "lucide-react"
 import type { Quiz, ParticipatedQuiz, UserQuizData } from "../../types/dashboard"
 import { useSocket } from "@/hooks/use-socket"
+import EditQuizModal from "../user-quiz-render/edit-quiz-modal"
+import { updateQuiz } from "@/api/quiz"
+import type { QuizData } from "@/types/quiz"
 
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL
 
@@ -32,7 +35,10 @@ export function Dashboard() {
             twitter: "",
             website: "",
         },
-    })
+    });
+    const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null)
+    const [showEditModal, setShowEditModal] = useState(false)
+
 
     const socket = useSocket()
     const navigate = useNavigate()
@@ -41,9 +47,10 @@ export function Dashboard() {
     // Load user profile on component mount
     useEffect(() => {
         if (!token) {
-            navigate("/")
+            navigate("/");
+            return;
         }
-        loadUserProfile()
+        loadUserProfile();
     }, [])
 
     const loadUserProfile = async () => {
@@ -86,6 +93,35 @@ export function Dashboard() {
             fetchQuizzes()
         }
     }, [user?._id])
+
+    const handleEditQuiz = (quiz: QuizData) => {
+        console.log("Editing quiz:", quiz)
+        setSelectedQuiz(quiz)
+        setShowEditModal(true)
+    }
+
+    const handleUpdateQuiz = async (quizId: string, updates: Partial<Quiz>) => {
+        try {
+            const result: Result = await updateQuiz(quizId, updates as any, token as string)
+            if (result.error) {
+                throw new Error(result.message)
+            }
+            console.log("Update quiz response:", result.data)
+            setQuizData((prev) => {
+                if (!prev) return prev
+                return {
+                    ...prev,
+                    createdQuizzes: prev.createdQuizzes.map((q) =>
+                        q._id === quizId ? { ...q, ...result.data } : q
+                    ),
+                }
+            })
+            setSelectedQuiz(null)
+            setShowEditModal(false)
+        } catch (error) {
+            console.error("Failed to update quiz:", error)
+        }
+    }
 
     const handleFirstButtonClick = (quizId: string, isCreated: boolean) => {
         if (isCreated) {
@@ -138,7 +174,7 @@ export function Dashboard() {
                 {quiz.thumbnail ? (
                     <div className="relative h-full w-full">
                         <img
-                            src={`${import.meta.env.VITE_APP_API_URL}/${quiz.thumbnail}` || "demo-image.png"}
+                            src={`${import.meta.env.VITE_APP_API_URL}/${quiz.thumbnail}` || "demo-image-thumbnail.jpeg"}
                             alt={quiz.title}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
@@ -178,7 +214,9 @@ export function Dashboard() {
                 {/* Hover Overlay with Edit Button Only */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
                     <button className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 transform hover:scale-110">
-                        <Edit className="w-5 h-5 text-white" />
+                        <Edit className="w-5 h-5 text-white" onClick={() => {
+                            handleEditQuiz(quiz)
+                        }} />
                     </button>
                 </div>
             </div>
@@ -498,7 +536,6 @@ export function Dashboard() {
                                                 quiz={participatedQuiz.quiz}
                                                 isCreated={false}
                                                 scoreDetails={participatedQuiz.scoreDetails}
-                                                participatedAt={participatedQuiz.participatedAt}
                                             />
                                         </div>
                                     ))}
@@ -519,6 +556,12 @@ export function Dashboard() {
                         </div>
                     </TabsContent>
                 </Tabs>
+                <EditQuizModal
+                    quiz={selectedQuiz as any}
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    onUpdate={handleUpdateQuiz as any}
+                />
             </div>
         </div>
     )

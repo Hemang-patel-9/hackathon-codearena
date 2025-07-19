@@ -5,9 +5,10 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Navbar from "./navbar"
 import Sidebar from "./sidebar"
-import { useLocation, useNavigate, useRoutes } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/authContext"
 import { Footer } from "./Footer"
+import { FullPageLoader } from "./loaders/full-page-loader"
 
 interface LayoutProps {
 	children: React.ReactNode
@@ -23,19 +24,16 @@ export default function Layout({ children }: LayoutProps) {
 	const publicRoutes = ["/login", "/signup", "/"]
 	const adminRoutes = ["/admin", "/admin/dashboard", "/admin/Users"]
 
-	// Private routing logic
 	useEffect(() => {
 		if (isAuthLoading) return
 
-		// General private routing: Redirect to login if not authenticated and not on a public route
 		if (!user && !publicRoutes.includes(location.pathname)) {
 			nav("/login")
 			return
 		}
 
-		// Admin private routing: Redirect if trying to access admin route without admin role
 		if (adminRoutes.includes(location.pathname) && user?.role !== "admin") {
-			nav("/dashboard") // Redirect to a non-admin page, e.g., dashboard
+			nav("/dashboard");
 			return
 		}
 	}, [isAuthLoading, user, location.pathname, nav])
@@ -60,7 +58,7 @@ export default function Layout({ children }: LayoutProps) {
 	}
 
 	if (isAuthLoading) {
-		return <div>Loading...</div>
+		return <FullPageLoader />
 	}
 
 	return (

@@ -47,7 +47,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 						}}
 					>
 						<div className="w-8 h-8 bg-gradient-to-tr from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-							<span className="text-foreground font-bold text-sm">XQ</span>
+							<span className="text-foreground font-bold text-sm text-white">XQ</span>
 						</div>
 						<span className="font-bold text-xl hidden sm:block">XQuizz</span>
 					</motion.div>
