@@ -32,7 +32,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
     };
 
     return (
-        <Card className="animate-fade-in">
+        <Card className="animate-fade-in border border-purple-900">
             <div className='w-full h-48'>
                 <img
                     src={`${import.meta.env.VITE_APP_API_URL}/${quiz.thumbnail}`}
@@ -104,7 +104,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
                     </p>
 
                     {/* Join Button */}
-                    <Button className="w-full mt-4" onClick={handleJoin} disabled={!onJoin || !quiz._id}>
+                    <Button className="w-full mt-4 bg-gradient-to-tr from-purple-900 to-blue-900" onClick={handleJoin} disabled={!onJoin || !quiz._id}>
                         Join Quiz
                     </Button>
                 </div>

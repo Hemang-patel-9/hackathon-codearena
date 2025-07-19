@@ -6,7 +6,8 @@ import { useTheme } from "../contexts/theme-context"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/authContext"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
+import { useState } from "react"
 
 interface NavbarProps {
 	onMenuClick: () => void
@@ -16,6 +17,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 	const { theme, toggleTheme } = useTheme()
 	const { logout, user } = useAuth()
 	const navigate = useNavigate()
+	const location = useLocation()
 
 	const navItems = [
 		{ name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -23,6 +25,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 		{ name: "Create Quiz", path: "/quiz-creation", icon: PlusCircle },
 	]
 
+	const [activeNav, setActiveNav] = useState("")
 	return (
 		<motion.nav
 			initial={{ y: -100 }}
@@ -56,6 +59,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 						<div className="hidden lg:flex items-center space-x-1">
 							{navItems.map((item, index) => {
 								const Icon = item.icon
+								const isActive = location.pathname === item.path
+
 								return (
 									<motion.div
 										key={item.name}
@@ -66,10 +71,23 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 										<Button
 											variant="ghost"
 											onClick={() => navigate(item.path)}
-											className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-blue-500/10 transition-all duration-200 group"
+											className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 group
+							${isActive
+													? "bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600"
+													: "hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-blue-500/10"
+												}`
+											}
 										>
-											<Icon className="h-4 w-4 text-foreground group-hover:text-purple-600 transition-colors" />
-											<span className="text-sm font-medium text-foreground group-hover:text-purple-600 transition-colors">
+											<Icon
+												className={`h-4 w-4 text-foreground transition-colors
+								${isActive ? "text-purple-600" : "group-hover:text-purple-600"}
+							`}
+											/>
+											<span
+												className={`text-sm font-medium text-foreground transition-colors
+								${isActive ? "text-purple-600" : "group-hover:text-purple-600"}
+							`}
+											>
 												{item.name}
 											</span>
 										</Button>
