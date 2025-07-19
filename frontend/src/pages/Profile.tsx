@@ -311,7 +311,7 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+		<div className="min-h-screen bg-transparent p-4">
 			<motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-4xl mx-auto">
 				{/* Header */}
 				<ProfileHeader

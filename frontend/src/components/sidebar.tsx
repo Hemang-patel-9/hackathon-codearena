@@ -10,8 +10,8 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	Home,
-	Icon,
 	User2,
+	Lock
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

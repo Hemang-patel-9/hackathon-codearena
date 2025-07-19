@@ -38,12 +38,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	useEffect(() => {
 		const validateToken = async () => {
 			const savedToken = localStorage.getItem("token");
+			console.log(savedToken);
 			if (!savedToken) {
 				setIsAuthLoading(false);
 				return;
 			}
 
 			try {
+
 				const res = await fetch(`${import.meta.env.VITE_APP_API_URL}/user/auth`, {
 					method: "GET",
 					headers: {
@@ -87,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
 	const context = useContext(AuthContext);
-	if (context === undefined) {	
+	if (context === undefined) {
 		throw new Error("useAuth must be used within an AuthProvider");
 	}
 	return context;

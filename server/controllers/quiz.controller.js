@@ -538,6 +538,7 @@ const getRandomItems = (arr, count) => {
 
 
 module.exports = {
+    getRandomQuizQuestions,
     checkPasswordProtectedQuizAccess,
     getAccessibleQuizzesByUser,
     getQuizById,
