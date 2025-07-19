@@ -11,6 +11,7 @@ const questionRoutes = require('./routes/question.router');
 const scoreRoutes = require('./routes/score.router');
 const quizRoutes = require('./routes/quiz.router')
 const quizGenerationRoutes = require('./routes/generator.router');
+const analyticsRoutes = require('./routes/analytics.router');
 
 require("./lib/connection")();
 const app = express();
@@ -33,9 +34,10 @@ fs.readdirSync(routesPath).forEach((file) => {
 
 app.use('/api/badges', badgeRoutes);
 app.use('/api/questions', questionRoutes);
-app.use('./api/quizzes',quizRoutes);
+app.use('/api/quizzes',quizRoutes);
 app.use('/api/scoreboards', scoreRoutes);
-app.use('/api', quizGenerationRoutes);
+app.use('/api/generate', quizGenerationRoutes);
+app.use('/api/analytics',analyticsRoutes);
 
 // Root route
 app.get("/", (req, res) => {

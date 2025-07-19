@@ -13,4 +13,8 @@ router.route('/:id')
     .put(quizController.updateQuiz)
     .delete(quizController.deleteQuiz);
 
+router.route('/quiz/:id').get(quizController.getAccessibleQuizzesByUser)
+
+router.route('/checkpassword').post(quizController.checkPasswordProtectedQuizAccess)
+
 module.exports = router;
