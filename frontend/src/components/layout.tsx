@@ -14,7 +14,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-	const { isAuthLoading, token } = useAuth();
+	const { isAuthLoading, token, user } = useAuth();
 	const [sidebarOpen, setSidebarOpen] = useState(false)
 	const location = useLocation()
 
@@ -44,15 +44,20 @@ export default function Layout({ children }: LayoutProps) {
 	return (
 		<div className="min-h-screen bg-background text-foreground">
 			{/* Fixed Navbar */}
-			<div className="fixed top-0 left-0 right-0 z-40">
-				<Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-			</div>
+			{
+				user?.role != 'admin' ?
+					<>
+						<div className="fixed top-0 left-0 right-0 z-40">
+							<Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+						</div>
+					</> : <></>
+			}
 
 
 			<div className="flex">
 				{/* Desktop Sidebar - Fixed */}
 				{
-					token ?
+					user?.role == 'admin' ?
 						<div className="hidden lg:block">
 							<Sidebar />
 						</div> : <></>

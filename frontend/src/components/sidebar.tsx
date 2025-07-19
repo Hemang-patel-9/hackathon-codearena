@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { href, Link, useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
 	LayoutDashboard,
@@ -9,13 +9,10 @@ import {
 	FileText,
 	ChevronLeft,
 	ChevronRight,
-	Home,
-	Icon,
 	User2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/contexts/authContext"
 
 interface SidebarProps {
 	onClose?: () => void
@@ -23,31 +20,13 @@ interface SidebarProps {
 
 export default function Sidebar({ onClose }: SidebarProps) {
 
-	const navigationItemsForUser = [
-		{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-		{ name: "Home", href: "/home", icon: Home },
-		{ name: "Quizes", href: "/Quizes", icon: Receipt },
-		{ name: "Create", href: "/quiz-creation", icon: FileText }
-	]
 
-
-
-	const navigationItemsForAdmin = [
+	const navigationItems = [
 		{ name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
 		{ name: "Quizes", href: "/admin/Quizes", icon: Receipt },
 		{ name: "Users", href: "/admin/Users", icon: User2 },
 		{ name: "Create", href: "/quiz-creation", icon: FileText }
 	]
-
-	const navigationItemsForGuest = [
-		{ name: "Home", href: "/home", icon: Home },
-		{ name: "Login", href: "/login", icon: Lock },
-	];
-	const { user, token } = useAuth();
-
-	const navigationItems = token ? (user?.role === 'admin'
-		? navigationItemsForAdmin
-		: navigationItemsForUser) : navigationItemsForGuest
 
 	const [isExpanded, setIsExpanded] = useState(true)
 	const [hoveredItem, setHoveredItem] = useState<string | null>(null)

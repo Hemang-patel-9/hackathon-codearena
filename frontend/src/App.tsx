@@ -41,7 +41,6 @@ export default function App() {
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/start/:quizId" element={<StartExam />} />
                   <Route path="/quiz-creation" element={<CreateQuizPage />} />
-                  <Route path="/quizes" element={<QuizExplorer />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/otp" element={<OtpPage />} />
