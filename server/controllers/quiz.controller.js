@@ -484,25 +484,58 @@ const checkPasswordProtectedQuizAccess = async (req, res) => {
     }
 };
 
-
 const getRandomQuizQuestions = async (req, res) => {
-    const { questions, count } = req.body;
+    try {
+        const { count } = req.body;
+        const quizId = req.params.id;
 
-    if (!questions || !Array.isArray(questions) || questions.length === 0) {
-        return res.status(400).json({ error: 'No questions provided.' });
+        // Validate input
+        if (!count || count <= 0) {
+            return res.status(400).json({ error: true, message: "Invalid question count provided." });
+        }
+
+        // Fetch quiz from DB
+        const quiz = await Quiz.findById(quizId).populate('questions');
+
+        if (!quiz) {
+            return res.status(404).json({ error: true, message: "Quiz not found." });
+        }
+
+        const questions = quiz.questions || [];
+        const totalQuestions = questions.length;
+
+        if (!Array.isArray(questions) || totalQuestions === 0) {
+            return res.status(400).json({ error: true, message: "No questions available in this quiz." });
+        }
+
+        if (count > totalQuestions) {
+            return res.status(400).json({
+                error: true,
+                message: `${count} questions requested, but only ${totalQuestions} available.`,
+            });
+        }
+
+        const randomQuestions = getRandomItems(questions, count);
+
+        return res.status(200).json({
+            error: false,
+            total: randomQuestions.length,
+            questions: randomQuestions,
+        });
+    } catch (err) {
+        console.error("Error fetching quiz questions:", err);
+        return res.status(500).json({
+            error: true,
+            message: "Internal server error.",
+        });
     }
+};
 
-    const questionCount = count && count > 0 && count <= questions.length
-        ? count
-        : questions.length;
+const getRandomItems = (arr, count) => {
+    const shuffled = [...arr].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+};
 
-    const randomQuestions = getRandomItems(questions, questionCount);
-
-    return res.json({
-        total: randomQuestions.length,
-        questions: randomQuestions,
-    });
-}
 
 module.exports = {
     getRandomQuizQuestions,
@@ -516,5 +549,6 @@ module.exports = {
     getPublicQuizzes,
     getUpcomingQuizzes,
     createQuiz,
-    getAllQuizzes
+    getAllQuizzes,
+    getRandomQuizQuestions
 }

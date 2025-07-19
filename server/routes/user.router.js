@@ -21,7 +21,8 @@ router.patch('/update-password/:id', userController.updatePassword);
 router.patch('/update-profile/:id', upload.single('avatar'), userController.updateProfile);
 router.post("/send-otp", authController.sendOtp);
 router.post("/verify-otp", authController.verifyOtp);
-
+router.get("/userdata/quiz", userController.getAllUsersWithQuizzes);
+router.get("/userdata/quiz/:userId", userController.getUserDetailsWithQuizzes);
 // Google SignIn
 router.post("/auth/google", authController.googleSignIn);
 

@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Eye, Edit, Trash2, CheckCircle, XCircle, Users, Shield, TrendingUp, Activity } from "lucide-react"
-import type { User } from "./types"
+import { Eye, Edit, Trash2, CheckCircle, XCircle, Users, Shield, Activity } from "lucide-react"
+import type { User } from "@/types/user"
 
 interface UserCardProps {
     user: User
@@ -20,7 +20,7 @@ const UserCard = ({ user, index, onView, onEdit, onDelete }: UserCardProps) => {
             case "moderator":
                 return "bg-blue-500/40 text-blue-700 dark:text-blue-200"
             case "user":
-                return "bg-purple-500/40 text-purple-7-- dark:text-purple-200"
+                return "bg-purple-500/40 text-purple-700 dark:text-purple-200"
             default:
                 return "bg-gray-500/40 text-gray-700 dark:text-gray-200"
         }
@@ -56,6 +56,12 @@ const UserCard = ({ user, index, onView, onEdit, onDelete }: UserCardProps) => {
         },
     }
 
+    // Calculate total quizzes and average score from recentQuizzes
+    const totalQuizzes = user.recentQuizzes?.length || 0
+    const averageScore = user.recentQuizzes && user.recentQuizzes.length > 0
+        ? user.recentQuizzes.reduce((sum, quiz) => sum + (quiz.score?.score || 0), 0) / user.recentQuizzes.length
+        : 0
+
     return (
         <motion.div
             variants={cardVariants}
@@ -71,7 +77,7 @@ const UserCard = ({ user, index, onView, onEdit, onDelete }: UserCardProps) => {
                     <motion.img
                         whileHover={{ scale: 1.1 }}
                         className="w-12 h-12 rounded-full border-2 border-purple-200"
-                        src={user.avatar || "/placeholder.svg?height=48&width=48"}
+                        src={`${import.meta.env.VITE_APP_API_URL}/${user.avatar}`}
                         alt={user.username}
                     />
                     <div className="min-w-0 flex-1">
@@ -142,17 +148,17 @@ const UserCard = ({ user, index, onView, onEdit, onDelete }: UserCardProps) => {
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="bg-background border border-purple-900 rounded-lg p-3 text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
-                        <TrendingUp size={14} className="text-purple-500" />
-                        <span className="text-lg font-bold text-purple-600">{user.averageScore.toFixed(1)}%</span>
+                        <Activity size={14} className="text-purple-500" />
+                        <span className="text-lg font-bold text-purple-600">{totalQuizzes}</span>
                     </div>
-                    <span className="text-xs text-gray-600">Avg Score</span>
+                    <span className="text-xs text-gray-600">Quizzes</span>
                 </div>
                 <div className="bg-background border border-purple-900 rounded-lg p-3 text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
                         <Activity size={14} className="text-blue-500" />
-                        <span className="text-lg font-bold text-blue-600">{user.totalQuizzes}</span>
+                        <span className="text-lg font-bold text-blue-600">{averageScore.toFixed(1)}%</span>
                     </div>
-                    <span className="text-xs text-gray-600">Quizzes</span>
+                    <span className="text-xs text-gray-600">Avg Score</span>
                 </div>
             </div>
         </motion.div>

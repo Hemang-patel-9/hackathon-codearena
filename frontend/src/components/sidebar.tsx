@@ -21,7 +21,6 @@ interface SidebarProps {
 	onClose?: () => void
 }
 
-
 export default function Sidebar({ onClose }: SidebarProps) {
 
 	const navigationItemsForUser = [

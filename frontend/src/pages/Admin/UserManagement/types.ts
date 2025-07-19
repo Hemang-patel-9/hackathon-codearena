@@ -32,5 +32,6 @@ export interface User {
         linkedin: string
         twitter: string
         website: string
-    }
+    },
+    recentQuizzes: []
 }

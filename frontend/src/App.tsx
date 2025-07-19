@@ -16,11 +16,10 @@ import { HeroSection } from "./pages/Home"
 import { CreateQuizPage } from "./components/create-quiz/create-quiz-page"
 import QuizExplorer from "./pages/UserQuizRender"
 import { SocketProvider } from "./contexts/socketContext"
+import StartExam from "./pages/StartExam"
+import MonitoringPage from "./pages/MonitoringPage"
 import AdminDashboard from "./pages/Admin/AdminDashboard"
 import UserManagement from "./pages/Admin/UserManagement"
-import StartExam from "./pages/StartExam"
-import { QuizLoader } from "./components/loaders/QuizLoader"
-import { CSVProcessingLoader } from "./components/loaders/CSVProcessingLoader"
 import CharacterCustomizer from "./pages/CharacterCustomizer"
 
 export default function App() {
@@ -32,17 +31,18 @@ export default function App() {
             <Router>
               <Layout>
                 <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/quiz" element={<QuizExplorer />} />
+                  <Route path="/quiz/monitoring/:quizId" element={<MonitoringPage />} />
                   <Route path="/admin" element={<Navigate to={"/admin/dashboard"} />} />
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
                   <Route path="/admin/Users" element={<UserManagement />} />
 
                   <Route path="/" element={<Navigate to="/home" />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/quiz" element={<QuizExplorer />} />
                   <Route path="/home" element={<HeroSection />} />
                   <Route path="/login" element={<LoginPage />} />
-                  <Route path="/start" element={<StartExam />} />
-                  <Route path="/quizzes" element={<QuizExplorer />} />
+                  <Route path="/start/:quizId" element={<StartExam />} />
                   <Route path="/quiz-creation" element={<CreateQuizPage />} />
                   <Route path="/quizes" element={<QuizExplorer />} />
                   <Route path="/profile" element={<ProfilePage />} />
@@ -50,9 +50,7 @@ export default function App() {
                   <Route path="/otp" element={<OtpPage />} />
                   <Route path="/github-success" element={<GitHubSuccess />} />
                   <Route path="*" element={<NotFound />} />
-
-                  <Route path="/loade" element={<QuizLoader />} />
-                  <Route path='/character' element={<CharacterCustomizer/>} />
+                  <Route path="/character" element={<CharacterCustomizer />} />
                 </Routes>
               </Layout>
             </Router>

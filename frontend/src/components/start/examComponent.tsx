@@ -10,6 +10,8 @@ import { ProgressBar } from "@/components/start/progress-bar"
 import { QuestionCard } from "@/components/start/question-card"
 import { ExamResults } from "@/components/start/exam-results"
 import { FullscreenWarning } from "@/components/start/fullscreen-warning"
+import { useAuth } from "@/contexts/authContext"
+import { useSocket } from "@/hooks/use-socket"
 
 
 interface Question {
@@ -64,6 +66,7 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 		tabSwitches: 0,
 	})
 
+	const { user } = useAuth();
 	const [showAnswer, setShowAnswer] = useState(false)
 	const [isAnswerCorrect, setIsAnswerCorrect] = useState(false)
 	const [warningVisible, setWarningVisible] = useState(false)
@@ -74,7 +77,7 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 	const autoAdvanceRef = useRef<NodeJS.Timeout | null>(null)
 	const questionStartTime = useRef<number>(Date.now())
 	const examContainerRef = useRef<HTMLDivElement>(null)
-
+	const socket = useSocket();
 	const currentQuestion = examData.questions[examState.currentQuestion]
 
 	// Fullscreen detection
@@ -271,7 +274,15 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 
 		const timeTaken = Math.floor((Date.now() - questionStartTime.current) / 1000)
 		const questionScore = calculateScore(isCorrect, timeTaken, currentQuestion.type)
-
+		console.log(user?._id, "--", isCorrect, "--", examData._id);
+		if (socket) {
+			//socket.on("student:submit-answer", ({ quizId, userId, isCorrect })
+			socket.emit("student:submit-answer", {
+				quizId: examData._id,
+				userId: user?._id,
+				isCorrect: isCorrect
+			})
+		}
 		setIsAnswerCorrect(isCorrect)
 		setShowAnswer(true)
 		setAutoAdvanceTime(2) // Start 2-second countdown

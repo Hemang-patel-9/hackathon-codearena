@@ -30,7 +30,7 @@ export default function CharacterCustomizer() {
     return (
         <div className="w-full h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex overflow-hidden">
             {/* Left Panel - Customization */}
-            <div className="w-96 relative">
+            <div className="w-[40%] h-full">
                 <CustomizationPanel
                     shirtStyle={shirtStyle}
                     setShirtStyle={setShirtStyle}
@@ -52,7 +52,7 @@ export default function CharacterCustomizer() {
             </div>
 
             {/* Right Panel - Character Display */}
-            <div className="flex-1 relative">
+            <div className="flex-1 w-[60%] relative">
                 {/* Spotlight Background Effect */}
                 <div className="absolute inset-0 bg-gradient-radial from-white/10 via-transparent to-transparent opacity-30"></div>
 

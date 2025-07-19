@@ -11,8 +11,8 @@ import { Avatar, AvatarImage, AvatarFallback } from './dashboard-avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './dashboard-tabs'
 import { format } from 'date-fns';
 import { Clock, Users, Trophy, Calendar, BookOpen, Target } from 'lucide-react';
-import type{Quiz, ParticipatedQuiz, UserQuizData} from '../../types/dashboard'
-
+import type { Quiz, ParticipatedQuiz, UserQuizData } from '../../types/dashboard'
+import { useSocket } from "@/hooks/use-socket";
 
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -31,7 +31,8 @@ export function Dashboard() {
             twitter: "",
             website: "",
         },
-    })
+    });
+    const socket = useSocket();
 
     const navigate = useNavigate();
     const { user, token } = useAuth();
@@ -88,6 +89,16 @@ export function Dashboard() {
         }
     }, [user?._id]);
 
+    const handleFirstButtonClick = (quizId: string, isCreated: boolean) => {
+        if (isCreated) {
+            navigate(`/quiz/monitoring/${quizId}`);
+            if (socket) {
+                socket.emit("creator:start-quiz", { quizId });
+            }
+        } else {
+            navigate(`/quiz/${quizId}/review`);
+        }
+    };
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
             case 'active':
@@ -123,7 +134,7 @@ export function Dashboard() {
                 {quiz.thumbnail ? (
                     <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                         <img
-                            src={quiz.thumbnail}
+                            src={`${import.meta.env.VITE_APP_API_URL}/${quiz.thumbnail}` || "demo-image.png"}
                             alt={quiz.title}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
@@ -252,8 +263,11 @@ export function Dashboard() {
 
                 {/* Action Button */}
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
-                        {isCreated ? 'View Details' : 'Review Quiz'}
+                    <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg" onClick={() => { handleFirstButtonClick(quiz._id, isCreated) }}>
+                        {isCreated ? 'Start Quiz' : 'Review Quiz'}
+                    </button>
+                    <button className="w-full px-4 mt-3 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
+                        {"Edit Quiz"}
                     </button>
                 </div>
             </CardContent>
@@ -300,7 +314,7 @@ export function Dashboard() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 transition-colors duration-500">
-            <style jsx global>{`
+            <style>{`
                 .line-clamp-2 {
                     display: -webkit-box;
                     -webkit-line-clamp: 2;

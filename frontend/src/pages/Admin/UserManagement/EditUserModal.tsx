@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { XCircle } from "lucide-react"
 import type { User } from "./types"
@@ -16,24 +14,80 @@ interface EditUserModalProps {
 
 const EditUserModal = ({ user, isOpen, onClose, onUpdate }: EditUserModalProps) => {
     const [formData, setFormData] = useState({
-        username: user?.username || "",
-        role: user?.role || "user",
-        isVerified: user?.isVerified || false,
-        isBanned: user?.isBanned || false,
-        bio: user?.bio || "",
+        username: "",
+        role: "user" as "user" | "admin" | "moderator",
+        isVerified: false,
+        isBanned: false,
+        bio: "",
         socialLinks: {
-            github: user?.socialLinks?.github || "",
-            linkedin: user?.socialLinks?.linkedin || "",
-            twitter: user?.socialLinks?.twitter || "",
-            website: user?.socialLinks?.website || "",
+            github: "",
+            linkedin: "",
+            twitter: "",
+            website: "",
         },
     })
 
+    const [formErrors, setFormErrors] = useState({
+        username: "",
+        role: "",
+    })
+
+    // Sync formData with user prop when it changes
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                username: user.username || "",
+                role: user.role || "user",
+                isVerified: user.isVerified || false,
+                isBanned: user.isBanned || false,
+                bio: user.bio || "",
+                socialLinks: {
+                    github: user.socialLinks?.github || "",
+                    linkedin: user.socialLinks?.linkedin || "",
+                    twitter: user.socialLinks?.twitter || "",
+                    website: user.socialLinks?.website || "",
+                },
+            })
+            setFormErrors({ username: "", role: "" }) // Reset errors
+        }
+    }, [user])
+
+
     if (!user) return null
+
+    const validateForm = () => {
+        let isValid = true
+        const errors = { username: "", role: "" }
+
+        if (!formData.username.trim()) {
+            errors.username = "Username is required"
+            isValid = false
+        }
+
+        if (!["user", "admin", "moderator"].includes(formData.role)) {
+            errors.role = "Invalid role selected"
+            isValid = false
+        }
+
+        setFormErrors(errors)
+        return isValid
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onUpdate(user._id, formData)
+        if (!validateForm()) return
+
+        // Clean up socialLinks by removing empty strings
+        const cleanedSocialLinks = Object.fromEntries(
+            Object.entries(formData.socialLinks).filter(([_, value]) => value.trim() !== "")
+        )
+
+        const updates: Partial<User> = {
+            ...formData,
+            socialLinks: cleanedSocialLinks,
+        }
+
+        onUpdate(user._id, updates)
         onClose()
     }
 
@@ -104,9 +158,13 @@ const EditUserModal = ({ user, isOpen, onClose, onUpdate }: EditUserModalProps) 
                                     type="text"
                                     value={formData.username}
                                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                    className="w-full px-4 py-3 bg-background border border-purple-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-foreground/90"
+                                    className={`w-full px-4 py-3 bg-background border ${formErrors.username ? "border-red-500" : "border-purple-900"
+                                        } rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-foreground/90`}
                                     required
                                 />
+                                {formErrors.username && (
+                                    <p className="text-red-500 text-xs mt-1">{formErrors.username}</p>
+                                )}
                             </div>
 
                             {/* Role */}
@@ -116,12 +174,16 @@ const EditUserModal = ({ user, isOpen, onClose, onUpdate }: EditUserModalProps) 
                                     whileFocus={{ scale: 1.02 }}
                                     value={formData.role}
                                     onChange={(e) => setFormData({ ...formData, role: e.target.value as "user" | "admin" | "moderator" })}
-                                    className="w-full px-4 py-3 bg-background border border-purple-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-foreground/90"
+                                    className={`w-full px-4 py-3 bg-background border ${formErrors.role ? "border-red-500" : "border-purple-900"
+                                        } rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-foreground/90`}
                                 >
                                     <option value="user">User</option>
                                     <option value="moderator">Moderator</option>
                                     <option value="admin">Admin</option>
                                 </motion.select>
+                                {formErrors.role && (
+                                    <p className="text-red-500 text-xs mt-1">{formErrors.role}</p>
+                                )}
                             </div>
 
                             {/* Status Checkboxes */}
@@ -219,7 +281,7 @@ const EditUserModal = ({ user, isOpen, onClose, onUpdate }: EditUserModalProps) 
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs text-background/60 mb-1">Website</label>
+                                        <label className="block text-xs text-gray-600 mb-1">Website</label>
                                         <motion.input
                                             whileFocus={{ scale: 1.02 }}
                                             type="url"

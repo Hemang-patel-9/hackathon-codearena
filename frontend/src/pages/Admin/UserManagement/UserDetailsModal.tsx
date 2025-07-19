@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { XCircle, Activity, TrendingUp, Star, CheckCircle, Users, Shield, Award, Calendar } from "lucide-react"
+import { XCircle, Activity, TrendingUp, Star, CheckCircle, Users, Shield, Calendar } from "lucide-react"
 import type { User } from "./types"
 
 interface UserDetailsModalProps {
@@ -37,13 +37,6 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
         }
     }
 
-    const getActivityIcon = (action: string) => {
-        if (action.includes("Quiz")) return <Activity size={14} className="text-blue-500" />
-        if (action.includes("Badge")) return <Award size={14} className="text-yellow-500" />
-        if (action.includes("Banned")) return <XCircle size={14} className="text-red-500" />
-        return <Calendar size={14} className="text-gray-500" />
-    }
-
     const modalVariants = {
         hidden: {
             opacity: 0,
@@ -69,6 +62,12 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
             },
         },
     }
+
+    // Calculate totalQuizzes and averageScore from recentQuizzes
+    const totalQuizzes = user.recentQuizzes?.length || 0
+    const averageScore = user.recentQuizzes && user.recentQuizzes.length > 0
+        ? user.recentQuizzes.reduce((sum, quiz) => sum + (quiz.score?.score || 0), 0) / user.recentQuizzes.length
+        : 0
 
     return (
         <AnimatePresence>
@@ -155,84 +154,61 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
                                         whileHover={{ scale: 1.05 }}
                                         className="bg-background dark:bg-gradient-to-tr from-purple-900/20 to-blue-900/20 dark:border-0 border border-purple-300 p-6 rounded-xl text-center"
                                     >
-                                        <div className="text-3xl font-bold text-blue-600">{user.totalQuizzes}</div>
+                                        <div className="text-3xl font-bold text-blue-600">{totalQuizzes}</div>
                                         <div className="text-sm text-blue-700 font-medium">Total Quizzes</div>
                                     </motion.div>
                                     <motion.div
                                         whileHover={{ scale: 1.05 }}
-                                        className="bg-background dark:bg-gradient-to-tr from-purple-900/20 to-blue-900/20 dark:border-0 border border-purple-300 p-6 rounded-xl text-center "
+                                        className="bg-background dark:bg-gradient-to-tr from-purple-900/20 to-blue-900/20 dark:border-0 border border-purple-300 p-6 rounded-xl text-center"
                                     >
-                                        <div className="text-3xl font-bold text-purple-600">{user.averageScore.toFixed(1)}%</div>
+                                        <div className="text-3xl font-bold text-purple-600">{averageScore.toFixed(1)}%</div>
                                         <div className="text-sm text-purple-700 font-medium">Average Score</div>
                                     </motion.div>
                                 </div>
                             </motion.div>
 
-                            {/* Recent Activity & Scores */}
+                            {/* Recent Quiz Scores */}
                             <motion.div
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="grid md:grid-cols-2 gap-4 "
+                                className="grid md:grid-cols-1 gap-4"
                             >
-                                {/* Recent Activity */}
-                                <div className="bg-background h-full dark:bg-gradient-to-tr from-purple-900/20 to-blue-900/20 dark:border-0 border border-purple-300 p-6 rounded-xl">
-                                    <h4 className="font-semibold text-foreground/60 mb-4 flex items-center space-x-2">
-                                        <Activity size={18} className="text-purple-600" />
-                                        <span>Recent Activity</span>
-                                    </h4>
-                                    <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-hide">
-                                        {user.recentActivity.map((activity, index) => (
-                                            <motion.div
-                                                key={index}
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: index * 0.1 }}
-                                                className="flex items-start space-x-3 p-4 rounded-lg border dark:border-purple-900 border-purple-200"
-                                            >
-                                                <div className="p-2 bg-purple-100 rounded-full flex-shrink-0">
-                                                    {getActivityIcon(activity.action)}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="text-sm font-medium text-foreground/60">{activity.action}</div>
-                                                    <div className="text-xs text-gray-600 mt-1 truncate">{activity.details}</div>
-                                                    <div className="text-xs text-gray-500 mt-1">
-                                                        {new Date(activity.timestamp).toLocaleString()}
-                                                    </div>
-                                                </div>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Recent Scores */}
                                 <div className="bg-background h-full dark:bg-gradient-to-tr from-purple-900/20 to-blue-900/20 dark:border-0 border border-purple-300 p-6 rounded-xl">
                                     <h4 className="font-semibold text-foreground/60 mb-4 flex items-center space-x-2">
                                         <TrendingUp size={18} className="text-blue-600" />
                                         <span>Recent Quiz Scores</span>
                                     </h4>
                                     <div className="space-y-3">
-                                        {user.recentScores.map((score, index) => (
-                                            <motion.div
-                                                key={index}
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: index * 0.1 }}
-                                                whileHover={{ scale: 1.02 }}
-                                                className="flex items-center justify-between p-4 bg-transparent rounded-lg border dark:border-purple-900 border-purple-200"
-                                            >
-                                                <div className="min-w-0 flex-1">
-                                                    <div className="text-sm font-medium text-foreground/60 truncate">{score.quizTitle}</div>
-                                                    <div className="text-xs text-gray-600">
-                                                        {new Date(score.completedAt).toLocaleDateString()}
+                                        {user.recentQuizzes && user.recentQuizzes.length > 0 ? (
+                                            user.recentQuizzes.map((quiz, index) => (
+                                                <motion.div
+                                                    key={index}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: index * 0.1 }}
+                                                    whileHover={{ scale: 1.02 }}
+                                                    className="flex items-center justify-between p-4 bg-transparent rounded-lg border dark:border-purple-900 border-purple-200"
+                                                >
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="text-sm font-medium text-foreground/60 truncate">{quiz.title}</div>
+                                                        <div className="text-xs text-gray-600">
+                                                            {new Date(quiz.schedule).toLocaleDateString()}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="text-right flex-shrink-0 ml-4">
-                                                    <div className="text-lg font-bold text-purple-600">{score.score}%</div>
-                                                    <div className="text-xs text-blue-600 font-medium">Rank #{score.rank}</div>
-                                                </div>
-                                            </motion.div>
-                                        ))}
+                                                    <div className="text-right flex-shrink-0 ml-4">
+                                                        <div className="text-lg font-bold text-purple-600">
+                                                            {quiz.score ? `${quiz.score.score}%` : "N/A"}
+                                                        </div>
+                                                        <div className="text-xs text-blue-600 font-medium">
+                                                            {quiz.score ? `Rank #${quiz.score.rank}` : "No rank"}
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            ))
+                                        ) : (
+                                            <div className="text-gray-600 text-sm">No recent quizzes available</div>
+                                        )}
                                     </div>
                                 </div>
                             </motion.div>

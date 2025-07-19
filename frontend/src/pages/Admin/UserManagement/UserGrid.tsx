@@ -3,16 +3,18 @@
 import { motion } from "framer-motion"
 import { Users } from "lucide-react"
 import UserCard from "./UserCard"
-import type { User } from "./types"
+import type { User } from "@/types/user"
 
 interface UserGridProps {
-    users: User[]
+    users: User[] | null | undefined
     onView: (user: User) => void
     onEdit: (user: User) => void
     onDelete: (user: User) => void
 }
 
 const UserGrid = ({ users, onView, onEdit, onDelete }: UserGridProps) => {
+    console.log("in grid ", users)
+
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -23,7 +25,7 @@ const UserGrid = ({ users, onView, onEdit, onDelete }: UserGridProps) => {
         },
     }
 
-    if (users.length === 0) {
+    if (!users || users.length === 0) {
         return (
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -42,7 +44,7 @@ const UserGrid = ({ users, onView, onEdit, onDelete }: UserGridProps) => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="bg-background backdrop-blur-sm rounded-2xl p-6 shadow-lg "
+            className="bg-background backdrop-blur-sm rounded-2xl p-6 shadow-lg"
         >
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {users.map((user, index) => (

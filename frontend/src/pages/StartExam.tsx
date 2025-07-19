@@ -4,6 +4,8 @@ import { getQuizById } from "@/api/quiz";
 import { useAuth } from "@/contexts/authContext";
 import type { Result } from "@/types/response";
 import { toast } from "@/hooks/use-toast";
+import { useParams } from "react-router-dom";
+import { useSocket } from "@/hooks/use-socket";
 // Replace the mock data section with:
 interface ApiExamData {
 	_id: string
@@ -160,6 +162,9 @@ const MockapiData: ApiExamData = {
 }
 
 export default function StartExam() {
+	const { user } = useAuth();
+	const params = useParams();
+	const socket = useSocket();
 	const { token } = useAuth();
 	const [apiData, setApiData] = useState<ApiExamData>(MockapiData)
 	const transformQuestionType = (apiType: string): "single" | "multiple" | "open" => {
@@ -196,7 +201,7 @@ export default function StartExam() {
 	useEffect(() => {
 		const fetchExamData = async () => {
 			try {
-				const response: Result = await getQuizById("6879f0e0051ff0499f829e1e", token as string);
+				const response: Result = await getQuizById(params.quizId as string, token as string);
 				if (response.error == null) {
 					const data = response.data as ApiExamData;
 					setApiData(data);
@@ -218,6 +223,12 @@ export default function StartExam() {
 				console.error("Failed to fetch exam data:", error);
 			}
 		}
+		setTimeout(() => {
+			if (socket) {
+				console.log({ quizId: params.quizId, userId: user?._id, username: user?.username })
+				socket.emit("student:join-quiz", { quizId: params.quizId, userId: user?._id, username: user?.username });
+			}
+		}, 500);
 		fetchExamData();
 	}, []);
 

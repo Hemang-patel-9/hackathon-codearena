@@ -17,8 +17,8 @@ router.route('/:id')
 router.get('/allQuiz/:id', quizController.getUserQuizzes);
 router.get('/upcoming/:id', quizController.getUpcomingQuizzes)
 router.get('/publicQuiz/all', quizController.getPublicQuizzes)
+router.get('/getrandomquestions/:id', quizController.getRandomQuizQuestions)
 router.route('/quiz/:id').get(quizController.getAccessibleQuizzesByUser)
-
 router.route('/checkpassword').post(quizController.checkPasswordProtectedQuizAccess)
 
 module.exports = router;
