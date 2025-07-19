@@ -16,6 +16,8 @@ import { HeroSection } from "./pages/Home"
 import { CreateQuizPage } from "./components/create-quiz/create-quiz-page"
 import QuizExplorer from "./pages/UserQuizRender"
 import { SocketProvider } from "./contexts/socketContext"
+// import QuizExplorer from "./pages/Quizzes"
+import StartExam from "./pages/StartExam"
 
 export default function App() {
   return (
@@ -31,7 +33,7 @@ export default function App() {
                   <Route path="/quiz" element={<QuizExplorer />} />
                   <Route path="/home" element={<HeroSection />} />
                   <Route path="/login" element={<LoginPage />} />
-                  <Route path="/quiz-creation" element={<CreateQuizPage />} />
+                  <Route path="/start" element={<StartExam />} />
                   <Route path="/quizzes" element={<QuizExplorer />} />
                   <Route path="/quiz-creation" element={<CreateQuizPage />} />
                   <Route path="/profile" element={<ProfilePage />} />

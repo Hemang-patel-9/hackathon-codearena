@@ -102,32 +102,15 @@ const getAllQuizzes = async (req, res) => {
 const getQuizById = async (req, res) => {
     try {
         const quizId = req.params.id;
-        const providedPassword = req.body.password || req.query.password;
-
+        //populate qustions data, questions : ["questionId1", "questionId2"]
         const quiz = await Quiz.findById(quizId)
-            .select('+password')
             .populate('creator', 'username email')
-            .populate('questions', 'questionText questionType options multimedia');
+            .populate({
+                path: 'questions',
+                model: 'Question'
+            });
 
-        if (!quiz) {
-            return res.status(404).json({ success: false, message: 'Quiz not found' });
-        }
-
-
-        if (quiz.visibility === 'password-protected') {
-            if (!providedPassword) {
-                return res.status(401).json({ success: false, message: 'This quiz is password-protected. Please provide a password.' });
-            }
-            const isMatch = await bcrypt.compare(providedPassword, quiz.password);
-            if (!isMatch) {
-                return res.status(401).json({ success: false, message: 'Incorrect password for this quiz.' });
-            }
-        }
-
-        const quizResponse = quiz.toObject();
-        delete quizResponse.password;
-
-        res.status(200).json({ success: true, data: quizResponse });
+        res.status(200).json({ success: true, data: quiz });
     } catch (error) {
         console.error('Error fetching quiz by ID:', error);
         if (error.name === 'CastError') {
