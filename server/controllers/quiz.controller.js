@@ -417,13 +417,100 @@ const getUpcomingQuizzes = async (req, res) => {
     }
 };
 
+const getAccessibleQuizzesByUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const quizzes = await Quiz.find({
+            $or: [
+                { visibility: "public" },
+                {
+                    visibility: "private",
+                    participants: userId
+                }
+            ]
+        })
+            .select("-password")
+            .populate("creator", "username email")
+            .populate("participants", "username email");
+
+        res.status(200).json({
+            error: null,
+            message: "Accessible quizzes fetched successfully",
+            data: quizzes
+        });
+    } catch (error) {
+        console.error("Error fetching quizzes:", error);
+        res.status(500).json({
+            error: "Failed tp fetch data.",
+            message: "Server error while fetching quizzes",
+            data: null
+        });
+    }
+};
+
+const checkPasswordProtectedQuizAccess = async (req, res) => {
+    try {
+        const { quizId, userId, password } = req.body;
+
+        // Validate ObjectIds
+        if (!mongoose.Types.ObjectId.isValid(quizId) || !mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: "Invalid IDs provided." });
+        }
+
+        // Validate password presence
+        if (!password) {
+            return res.status(400).json({ success: false, message: "Password is required." });
+        }
+
+        const quiz = await Quiz.findById(quizId);
+
+        if (!quiz) {
+            return res.status(404).json({ success: false, message: "Quiz not found." });
+        }
+
+        if (quiz.visibility !== "password-protected") {
+            return res.status(403).json({ success: false, message: "Quiz is not password protected." });
+        }
+
+        if (!quiz.password) {
+            return res.status(500).json({ success: false, message: "Password not set for this protected quiz." });
+        }
+
+        // Check if user is a participant
+        const isParticipant = quiz.participants.some((participantId) =>
+            participantId.equals(userId)
+        );
+
+        if (!isParticipant) {
+            return res.status(403).json({ success: false, message: "User is not a participant." });
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, quiz.password);
+
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: "Incorrect password." });
+        }
+
+        return res.status(200).json({ success: true, message: "Access granted." });
+
+    } catch (error) {
+        console.error("Error checking quiz access:", error);
+        return res.status(500).json({ success: false, message: "Server error." });
+    }
+};
+
 module.exports = {
-    createQuiz,
-    getAllQuizzes,
+    checkPasswordProtectedQuizAccess,
+    getAccessibleQuizzesByUser,
     getQuizById,
+    deleteQuiz,
     updateQuiz,
     deleteQuiz,
     getUserQuizzes,
     getPublicQuizzes,
-    getUpcomingQuizzes
+    getUpcomingQuizzes,
+    createQuiz,
+    getAllQuizzes
 }

@@ -15,29 +15,34 @@ import GitHubSuccess from "./pages/GithubSuccess"
 import { HeroSection } from "./pages/Home"
 import { CreateQuizPage } from "./components/create-quiz/create-quiz-page"
 import QuizExplorer from "./pages/UserQuizRender"
+import { SocketProvider } from "./contexts/socketContext"
 
 export default function App() {
   return (
     <ThemeProvider>
       <ConfirmationProvider>
         <AuthProvider>
-          <Router>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/quiz" element={<QuizExplorer />} />
-                <Route path="/home" element={<HeroSection />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/quiz-creation" element={<CreateQuizPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/otp" element={<OtpPage />} />
-                <Route path="/github-success" element={<GitHubSuccess />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
-          </Router>
+          <SocketProvider>
+            <Router>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/quiz" element={<QuizExplorer />} />
+                  <Route path="/home" element={<HeroSection />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/quiz-creation" element={<CreateQuizPage />} />
+                  <Route path="/quizzes" element={<QuizExplorer />} />
+                  <Route path="/quiz-creation" element={<CreateQuizPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/otp" element={<OtpPage />} />
+                  <Route path="/github-success" element={<GitHubSuccess />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>``
+            </Router>
+          </SocketProvider>
           <Toaster />
         </AuthProvider>
       </ConfirmationProvider>

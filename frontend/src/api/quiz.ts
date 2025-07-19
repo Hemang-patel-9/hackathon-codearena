@@ -4,12 +4,6 @@ import type { Result } from "@/types/response";
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 export async function createQuiz(formData: QuizData, token: string): Promise<Result> {
-	console.log(formData, " --");
-	return {
-		data: null,
-		error: null,
-		message: "Quiz created successfully",
-	};
 	try {
 		const response = await fetch(`${API_BASE_URL}/quiz`, {
 			method: "POST",
