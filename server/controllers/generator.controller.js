@@ -1,27 +1,6 @@
 require("dotenv").config();
 const axios = require("axios");
 
-const validateBasicFormat = (questionObj) => {
-  if (
-    !questionObj ||
-    typeof questionObj !== 'object' ||
-    typeof questionObj.questionText !== 'string' ||
-    !questionObj.questionText.trim()
-  ) return false;
-
-  if (
-    questionObj.questionType !== "open-ended" &&
-    (!Array.isArray(questionObj.options) || questionObj.options.length < 2)
-  ) return false;
-
-  if (
-    questionObj.options &&
-    !questionObj.options.some(opt => opt && typeof opt === 'object' && opt.isCorrect === true)
-  ) return false;
-
-  return true;
-};
-
 exports.generateQuizQuestions = async (req, res) => {
   try {
     const { topic } = req.body;
