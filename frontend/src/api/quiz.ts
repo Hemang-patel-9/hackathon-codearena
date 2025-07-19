@@ -20,3 +20,22 @@ export async function createQuiz(formData: QuizData, token: string): Promise<Res
 		throw error;
 	}
 }
+
+export async function getQuizById(quizId: string, token: string): Promise<Result> {
+	try {
+		const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
+			headers: {
+				"Authorization": `Bearer ${token}`,
+			},
+		});
+
+		return response.json() as Promise<Result>;
+	} catch (error) {
+		console.error("Failed to fetch quiz:", error);
+		throw {
+			message: "Failed to fetch quiz data",
+			error: "Network error",
+			data:null
+		};
+	}
+}
