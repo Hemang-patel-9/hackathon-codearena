@@ -255,11 +255,26 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 		return points
 	}
 
-	const checkAnswer = () => {
+	const checkAnswer = async () => {
 		let isCorrect = false
 
 		if (currentQuestion.type === "open") {
-			isCorrect = examState.openAnswer.trim().length > 0
+			// isCorrect = examState.openAnswer.trim().length > 0
+
+			const response = await fetch("http://localhost:5678/webhook-test/score", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					question: currentQuestion,
+					answer: examState.openAnswer.trim()
+				}),
+			});
+
+			const result = await response.json()
+			isCorrect = result[0].output >= 7;
+
 		} else {
 			const correctOptions = currentQuestion.options.filter((opt) => opt.isCorrect).map((opt) => opt._id)
 			const selectedOptions = examState.selectedAnswers

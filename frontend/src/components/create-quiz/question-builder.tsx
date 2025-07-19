@@ -145,14 +145,36 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 		input.click()
 	}
 
+	const handleAiGenerate = async () => {
+		showAiGenerator
+		try {
+			const response = await fetch("http://localhost:5678/webhook-test/generate", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					topic: aiTags,
+					sessionId: "a",
+				}),
+			});
 
-	const handleAiGenerate = () => {
-		// AI generation logic here
-		console.log("Generating questions with AI:", { tags: aiTags, count: aiQuestionCount })
-		setShowAiGenerator(false)
-		setAiTags("")
-		setAiQuestionCount("")
-	}
+			if (!response.ok) {
+				throw new Error(`Server responded with status ${response.status}`);
+			}
+
+			const result = await response.json();
+			console.log("AI-Agent Response:", result.output);
+			updateQuizData({ questions: result.output.data});
+
+			setShowAiGenerator(false);
+			setAiTags("");
+			setAiQuestionCount("");
+		} catch (error) {
+			console.error("Error fetching AI questions:", error);
+		}
+	};
+
 
 	return (
 		<motion.div
@@ -172,7 +194,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 							>
 								<HelpCircle className="w-6 h-6 text-purple-500" />
 							</motion.div>
-							Questions ({quizData.questions.length})
+							Questions ({quizData.questions?.length?? 0})
 						</div>
 						<div className="flex items-center gap-2">
 							<Button
@@ -205,7 +227,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 
 			{/* Questions List */}
 			<AnimatePresence>
-				{quizData.questions.map((question, index) => (
+				{Array.isArray(quizData.questions) && quizData.questions.map((question, index) => (
 					<motion.div
 						key={index}
 						initial={{ opacity: 0, y: 20 }}
@@ -226,7 +248,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 			</AnimatePresence>
 
 			{/* Empty State */}
-			{quizData.questions.length === 0 && (
+			{quizData.questions?.length === 0 && (
 				<motion.div
 					initial={{ opacity: 0, scale: 0.9 }}
 					animate={{ opacity: 1, scale: 1 }}
@@ -355,7 +377,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 											className="border-blue-200 dark:border-blue-800 focus:border-blue-500 focus:ring-blue-500"
 										/>
 									</div>
-									<div className="space-y-2">
+									{/* <div className="space-y-2">
 										<Label
 											htmlFor="questionCount"
 											className="text-sm font-medium text-foreground flex items-center gap-2"
@@ -373,14 +395,14 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 											onChange={(e) => setAiQuestionCount(e.target.value)}
 											className="border-blue-200 dark:border-blue-800 focus:border-blue-500 focus:ring-blue-500"
 										/>
-									</div>
+									</div> */}
 									<div className="flex gap-2 pt-2">
 										<Button onClick={() => setShowAiGenerator(false)} variant="outline" className="flex-1">
 											Cancel
 										</Button>
 										<Button
 											onClick={handleAiGenerate}
-											disabled={!aiTags.trim() || !aiQuestionCount.trim()}
+											disabled={!aiTags.trim()}
 											className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
 										>
 											<Sparkles className="w-4 h-4 mr-2" />
