@@ -35,7 +35,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
         <Card className="animate-fade-in">
             <div className='w-full h-48'>
                 <img
-                    src={quiz.thumbnail}
+                    src={`${import.meta.env.VITE_APP_API_URL}/${quiz.thumbnail}`}
                     alt={quiz.title}
                     className="mt-4 w-full h-36 object-cover border border-border"
                 />

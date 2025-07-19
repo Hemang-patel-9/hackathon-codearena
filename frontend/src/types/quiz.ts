@@ -1,6 +1,7 @@
 import type { QuestionData } from "./question"
 
 export interface QuizData {
+	_id: string
 	creator: string
 	title: string
 	description: string
