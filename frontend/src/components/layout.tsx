@@ -8,7 +8,6 @@ import Sidebar from "./sidebar"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/authContext"
 import { Footer } from "./Footer"
-import { FullPageLoader } from "./loaders/full-page-loader"
 import QuizLoader from "./loaders/QuizLoader"
 
 interface LayoutProps {

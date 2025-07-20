@@ -243,7 +243,7 @@ export function Dashboard() {
                         </div>
                         <div className="flex items-center gap-1">
                             <Users className="w-4 h-4 text-green-500" />
-                            <span>{quiz.participants.length}</span>
+                            <span>{quiz?.participants?.length ?? 0} </span>
                         </div>
                         <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4 text-purple-500" />
@@ -310,7 +310,7 @@ export function Dashboard() {
                                     <div className="text-xs text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50 p-2 rounded">
                                         <div className="flex items-center justify-between">
                                             <span>{scoreDetails.correctAnswersCount} correct answers</span>
-                                            <span>{scoreDetails.averageResponseTime.toFixed(1)}s avg time</span>
+                                            <span>{scoreDetails.averageResponseTime ?? 0}s avg time</span>
                                         </div>
                                     </div>
                                 </div>

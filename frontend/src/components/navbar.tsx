@@ -1,13 +1,12 @@
 "use client"
 
-import { Bell, LogIn, Menu, Moon, Sun, User, LayoutDashboard, BookOpen, PlusCircle } from "lucide-react"
+import { LogIn, Menu, Moon, Sun, User, LayoutDashboard, BookOpen, PlusCircle } from "lucide-react"
 import { motion } from "framer-motion"
 import { useTheme } from "../contexts/theme-context"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/authContext"
 import { useNavigate, useLocation } from "react-router-dom"
-import { useState } from "react"
 
 interface NavbarProps {
 	onMenuClick: () => void
@@ -25,7 +24,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 		{ name: "Create Quiz", path: "/quiz-creation", icon: PlusCircle },
 	]
 
-	const [activeNav, setActiveNav] = useState("")
 	return (
 		<motion.nav
 			initial={{ y: -100 }}
