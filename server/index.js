@@ -8,7 +8,7 @@ const path = require("path");
 const { initializeSocket } = require("./socket/socket");
 const app = express();
 const server = http.createServer(app);
-
+const ddosLimiter = require("./services/ddos-prevention.service")
 // MongoDB connection
 require("./lib/connection")();
 
@@ -20,6 +20,7 @@ app.use("/media", express.static("media"));
 app.use(cors({
 	origin:"*"
 }));
+app.use(ddosLimiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
