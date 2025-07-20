@@ -21,6 +21,7 @@ import MonitoringPage from "./pages/MonitoringPage"
 // import AdminDashboard from "./pages/Admin/AdminDashboard"
 import UserManagement from "./pages/Admin/UserManagement"
 import CharacterCustomizer from "./pages/CharacterCustomizer"
+import LeaderBoard from "./pages/LeaderBoard"
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
                   <Route path="/admin/dashboard" element={<Dashboard />} />
                   <Route path="/admin/Users" element={<UserManagement />} />
                   <Route path="/home" element={<HeroSection />} />
+                  <Route path="/leaderboard/:quizId" element={<LeaderBoard />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/start/:quizId" element={<StartExam />} />
                   <Route path="/quiz-creation" element={<CreateQuizPage />} />

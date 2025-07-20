@@ -5,7 +5,9 @@ const quizController = require('../controllers/quiz.controller');
 // Base route for /api/quizzes
 router.route('/')
     .post(quizController.createQuiz)
-    .get(quizController.getAllQuizzes);
+    .get(quizController.getAllQuizzes)
+
+router.route('/scoreboard/:quizId').get(quizController.getScoreBoardByQuizId)
 
 // Route for /api/quizzes/:id
 router.route('/:id')

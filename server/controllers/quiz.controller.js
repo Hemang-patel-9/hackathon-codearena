@@ -2,6 +2,7 @@
 const Quiz = require('../models/quiz.model');
 const bcrypt = require('bcryptjs');
 const Question = require('../models/question.model');
+const Scoreboard = require('../models/score.model');
 const mongoose = require('mongoose');
 const scoreModel = require('../models/score.model');
 
@@ -205,6 +206,34 @@ const updateQuiz = async (req, res) => {
             return res.status(400).json({ success: false, message: messages.join(', ') });
         }
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+const getScoreBoardByQuizId = async (req, res) => {
+    try {
+        const { quizId } = req.params;
+
+        // Validate quizId
+        if (!quizId) {
+            return res.status(400).json({ message: "Quiz ID is required" });
+        }
+
+        // Fetch the scoreboard document for the quiz
+        const scoreboard = await Scoreboard.findOne({ quizId });
+
+        if (!scoreboard) {
+            return res.status(404).json({ message: "Scoreboard not found" });
+        }
+
+        // Respond with array of participants
+        return res.status(200).json({
+            quizId: scoreboard.quizId,
+            participantScores: scoreboard.participantScores,
+        });
+
+    } catch (error) {
+        console.error("Error fetching scoreboard:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
@@ -544,6 +573,7 @@ module.exports = {
     getQuizById,
     deleteQuiz,
     updateQuiz,
+    getScoreBoardByQuizId,
     deleteQuiz,
     getUserQuizzes,
     getPublicQuizzes,

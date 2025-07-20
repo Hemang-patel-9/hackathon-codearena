@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
-
+const { createScoreBoard } = require("../controllers/score.controller");
 let io = null;
+const Scoreboard = require('../models/score.model');
 let online = 0;
 
 // 🧠 Main in-memory quiz room structure
@@ -35,6 +36,7 @@ const initializeSocket = (server) => {
 			if (!room[quizId]) return socket.emit("quiz:not-ready");
 
 			room[quizId].participants[userId] = {
+				userId,
 				username,
 				avatar,
 				score: 0,
@@ -66,6 +68,8 @@ const initializeSocket = (server) => {
 				player.correctAnswersCount += 1;
 			}
 
+			player.userId = userId;
+
 			// 🏁 Rank calculation
 			const sorted = Object.entries(quiz.participants)
 				.sort(([, a], [, b]) => b.score - a.score);
@@ -73,10 +77,12 @@ const initializeSocket = (server) => {
 			sorted.forEach(([uid, data], index) => {
 				quiz.participants[uid].rank = index + 1;
 			});
-			console.log(player, "00");
 
 			// ✉️ Emit updated data to student
 			socket.emit("quiz:update-self", {
+				userId: player.userId,
+				username: player.username,
+				avatar: player.avatar,
 				score: player.score,
 				correctAnswersCount: player.correctAnswersCount,
 				rank: player.rank,
@@ -106,11 +112,16 @@ const initializeSocket = (server) => {
 			socket.emit("creator:live-data", leaderboard);
 		});
 
-		socket.on("creator:end-quiz", ({ quizId }) => {
+		socket.on("creator:end-quiz", async ({ quizId }) => {
 			const quiz = room[quizId];
 			if (!quiz) return;
-			console.log(`🏁 Quiz ended: ${quiz.participants}`);
-
+			const participantScores = Object.values(quiz.participants);
+			socket.emit("quiz:endbycreator", {
+				data: quizId,
+				message: "Exam is Ended By user",
+				error: null
+			});
+			await Scoreboard.create({ quizId: quizId, participantScores: participantScores })
 		});
 
 		// 🔸 Handle disconnect

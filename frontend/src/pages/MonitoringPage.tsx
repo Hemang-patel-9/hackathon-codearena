@@ -1,7 +1,7 @@
 "use client"
 
 import { useSocket } from "@/hooks/use-socket"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Trophy, User, Target, AlertTriangle, Trash2, Video, Users, Activity, Crown, Medal, Award } from "lucide-react"
@@ -13,6 +13,7 @@ const MonitoringPage = () => {
 	const params = useParams()
 	const socket = useSocket()
 	const [isLoading, setIsLoading] = useState(true)
+	const navigate = useNavigate();
 
 	type LeaderboardUser = {
 		userId: string
@@ -35,7 +36,12 @@ const MonitoringPage = () => {
 			setIsLoading(false)
 		}
 
+		const handleLastCall = (data: any) => {
+			navigate(`/leaderboard/${data.data}`);
+		}
+
 		socket.on("quiz:leaderboard", handleLeaderboard)
+		socket.on("quiz:endbycreator", handleLastCall)
 		socket.emit("creator:get-live-data", { quizId: params.quizId })
 
 		// Simulate loading for demo
