@@ -1,68 +1,81 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Navbar from "./navbar"
 import Sidebar from "./sidebar"
-import { useLocation } from "react-router-dom"
-import { useAuth } from "@/contexts/authContext";
+import { useLocation, useNavigate } from "react-router-dom"
+import { useAuth } from "@/contexts/authContext"
 import { Footer } from "./Footer"
+import { FullPageLoader } from "./loaders/full-page-loader"
+
 interface LayoutProps {
 	children: React.ReactNode
 }
 
 export default function Layout({ children }: LayoutProps) {
-	const { isAuthLoading, token, user } = useAuth();
+	const { isAuthLoading, user } = useAuth()
 	const [sidebarOpen, setSidebarOpen] = useState(false)
 	const location = useLocation()
+	const nav = useNavigate()
 
 	const hideLayoutRoutes = ["/login", "/signup"]
+	const publicRoutes = ["/login", "/signup", "/"]
+	const adminRoutes = ["/admin", "/admin/dashboard", "/admin/Users"]
+
+	useEffect(() => {
+		if (isAuthLoading) return
+
+		if (!user && !publicRoutes.includes(location.pathname)) {
+			nav("/login")
+			return
+		}
+
+		if (adminRoutes.includes(location.pathname) && user?.role !== "admin") {
+			nav("/dashboard");
+			return
+		}
+	}, [isAuthLoading, user, location.pathname, nav])
 
 	if (hideLayoutRoutes.includes(location.pathname)) {
-		return <div className="min-h-screen bg-background text-foreground">
-			<div className="fixed top-0 left-0 right-0 z-40">
-				<Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-			</div>
-			<main className="flex-1 min-h-screen">
-				<div className="pt-16 h-screen overflow-y-auto">
-					<div className="p-4">
-						<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-							{children}
-						</motion.div>
-					</div>
+		return (
+			<div className="min-h-screen bg-background text-foreground">
+				<div className="fixed top-0 left-0 right-0 z-40">
+					<Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 				</div>
-			</main>
-		</div>
+				<main className="flex-1 min-h-screen">
+					<div className="pt-16 h-screen overflow-y-auto">
+						<div className="p-4">
+							<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+								{children}
+							</motion.div>
+						</div>
+					</div>
+				</main>
+			</div>
+		)
 	}
 
 	if (isAuthLoading) {
-		return <div>Loading...</div>;
+		return <FullPageLoader />
 	}
 
 	return (
 		<div className="min-h-screen bg-background text-foreground">
 			{/* Fixed Navbar */}
-			{
-				user?.role != 'admin' ?
-					<>
-						<div className="fixed top-0 left-0 right-0 z-40">
-							<Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-						</div>
-					</> : <></>
-			}
-
-
+			<div className="fixed top-0 left-0 right-0 z-40">
+				<Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+			</div>
 			<div className="flex">
 				{/* Desktop Sidebar - Fixed */}
-				{
-					user?.role == 'admin' ?
-						<div className="hidden lg:block">
-							<Sidebar />
-						</div> : <></>
-				}
-
+				{user?.role == "admin" ? (
+					<div className="hidden lg:block">
+						<Sidebar />
+					</div>
+				) : (
+					<></>
+				)}
 				{/* Mobile Sidebar Overlay */}
 				<AnimatePresence>
 					{sidebarOpen && (
@@ -86,7 +99,6 @@ export default function Layout({ children }: LayoutProps) {
 						</>
 					)}
 				</AnimatePresence>
-
 				{/* Main Content Area */}
 				<main className="flex-1 min-h-screen">
 					<div className="pt-16 h-screen overflow-y-auto">
@@ -99,6 +111,6 @@ export default function Layout({ children }: LayoutProps) {
 					</div>
 				</main>
 			</div>
-		</div >
+		</div>
 	)
 }

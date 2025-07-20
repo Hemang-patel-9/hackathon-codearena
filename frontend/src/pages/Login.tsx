@@ -217,9 +217,9 @@ export default function LoginPage() {
 	}, []);
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+		<div className="min-h-screen bg-transparent flex items-center justify-center p-4">
 			<motion.div variants={containerVariants} initial="hidden" animate="visible" className="w-full max-w-md">
-				<Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+				<Card className="shadow-2xl shadow-purple-900/30 border bg-transparent dark:border-purple-950 border-purple-200 backdrop-blur-sm">
 					<CardHeader className="text-center space-y-4">
 						<motion.div
 							initial={{ scale: 0 }}

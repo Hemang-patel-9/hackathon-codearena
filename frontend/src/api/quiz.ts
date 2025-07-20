@@ -67,7 +67,7 @@ export async function getQuizById(quizId: string, token: string): Promise<Result
 		throw {
 			message: "Failed to fetch quiz data",
 			error: "Network error",
-			data:null
+			data: null
 		};
 	}
 }
@@ -87,7 +87,7 @@ export const updateQuiz = async (quizId: string, updates: Partial<QuizData>, tok
 			throw new Error(`HTTP error! status: ${response.status}`)
 		}
 
-		const data: QuizData = await response.json()
+		const data: Result = await response.json()
 		return data
 	} catch (error) {
 		console.error("Failed to update quiz:", error)

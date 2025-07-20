@@ -34,7 +34,7 @@ const PasswordTab = ({
 	isPasswordSaving: any
 }) => {
 	return (
-		<Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+		<Card className="shadow-lg shadow-foreground/10 border-0 bg-background backdrop-blur-sm">
 			<CardContent className="p-6">
 				<form onSubmit={handlePasswordSubmit} className="space-y-6">
 					<motion.div

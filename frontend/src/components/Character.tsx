@@ -6,8 +6,6 @@ import { TextureLoader, type Group } from "three"
 import { FacemeshEyeDefaults, useTexture } from "@react-three/drei"
 
 interface CharacterProps {
-    hairStyle: string
-    hairColor: string
     shirtStyle: string
     shirtColor: string
     pantsStyle: string
@@ -246,8 +244,6 @@ function Pants({ style, color }: { style: string; color: string }) {
 }
 
 function Cap({ style, color }: { style: string; color: string }) {
-    if (style === "none") return null
-
     switch (style) {
         case "baseball":
             return (
@@ -364,6 +360,6 @@ function Cap({ style, color }: { style: string; color: string }) {
                 </mesh>
             )
         default:
-            return null
+            return "baseball"
     }
 }

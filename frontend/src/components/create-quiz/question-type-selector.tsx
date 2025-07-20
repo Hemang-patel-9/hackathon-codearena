@@ -103,7 +103,7 @@ export function QuestionTypeSelector({ onSelect, onClose }: QuestionTypeSelector
 												<h3 className="font-semibold text-gray-900 dark:text-white mb-1 sm:mb-1.5 text-sm sm:text-base leading-tight">
 													{type.title}
 												</h3>
-												<p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+												<p className="text-xs sm:text-sm truncate text-gray-600 dark:text-gray-400 leading-relaxed">
 													{type.description}
 												</p>
 											</div>

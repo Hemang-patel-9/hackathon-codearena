@@ -9,7 +9,7 @@ import {
 	FileText,
 	ChevronLeft,
 	ChevronRight,
-	User2,
+	User2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -23,7 +23,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
 	const navigationItems = [
 		{ name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-		{ name: "Quizes", href: "/admin/Quizes", icon: Receipt },
+		// { name: "Quizes", href: "/admin/Quizes", icon: Receipt },
 		{ name: "Users", href: "/admin/Users", icon: User2 },
 		{ name: "Create", href: "/quiz-creation", icon: FileText }
 	]

@@ -20,6 +20,8 @@ import StartExam from "./pages/StartExam"
 import MonitoringPage from "./pages/MonitoringPage"
 import AdminDashboard from "./pages/Admin/AdminDashboard"
 import UserManagement from "./pages/Admin/UserManagement"
+import CharacterCustomizer from "./pages/CharacterCustomizer"
+import { VideoProvider } from "./contexts/videoContext"
 
 export default function App() {
   return (
@@ -27,28 +29,31 @@ export default function App() {
       <ConfirmationProvider>
         <AuthProvider>
           <SocketProvider>
-            <Router>
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<HeroSection />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/quiz" element={<QuizExplorer />} />
-                  <Route path="/quiz/monitoring/:quizId" element={<MonitoringPage />} />
-                  <Route path="/admin" element={<Navigate to={"/admin/dashboard"} />} />
-                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  <Route path="/admin/Users" element={<UserManagement />} />
-                  <Route path="/home" element={<HeroSection />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/start/:quizId" element={<StartExam />} />
-                  <Route path="/quiz-creation" element={<CreateQuizPage />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/otp" element={<OtpPage />} />
-                  <Route path="/github-success" element={<GitHubSuccess />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Layout>
-            </Router>
+            <VideoProvider>
+              <Router>
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<HeroSection />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/quiz" element={<QuizExplorer />} />
+                    <Route path="/quiz/monitoring/:quizId" element={<MonitoringPage />} />
+                    <Route path="/admin" element={<Navigate to={"/admin/dashboard"} />} />
+                    <Route path="/admin/dashboard" element={<Dashboard />} />
+                    <Route path="/admin/Users" element={<UserManagement />} />
+                    <Route path="/home" element={<HeroSection />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/start/:quizId" element={<StartExam />} />
+                    <Route path="/quiz-creation" element={<CreateQuizPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/otp" element={<OtpPage />} />
+                    <Route path="/github-success" element={<GitHubSuccess />} />
+                    <Route path="*" element={<NotFound />} />
+                    <Route path="/character" element={<CharacterCustomizer />} />
+                  </Routes>
+                </Layout>
+              </Router>
+            </VideoProvider>
           </SocketProvider>
           <Toaster />
         </AuthProvider>

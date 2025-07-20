@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, Camera } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ExamIntro } from "@/components/start/exam-intro"
 import { ExamHeader } from "@/components/start/exam-header"
@@ -10,9 +10,10 @@ import { ProgressBar } from "@/components/start/progress-bar"
 import { QuestionCard } from "@/components/start/question-card"
 import { ExamResults } from "@/components/start/exam-results"
 import { FullscreenWarning } from "@/components/start/fullscreen-warning"
+import FaceDetectionComponent from "@/components/start/face-detection"
 import { useAuth } from "@/contexts/authContext"
 import { useSocket } from "@/hooks/use-socket"
-
+import { useVideo } from "@/contexts/videoContext"
 
 interface Question {
 	_id: string
@@ -49,6 +50,7 @@ interface ExamState {
 	}>
 	cheatingAttempts: number
 	tabSwitches: number
+	faceViolations: number
 }
 
 export default function ExamComponent({ examData }: { examData: { _id: string, title: string, description: string, questions: Question[], timePerQuestion: number, passingCriteria: number, thumbnail?: string, creator: { username: string } } }) {
@@ -64,21 +66,62 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 		answers: [],
 		cheatingAttempts: 0,
 		tabSwitches: 0,
+		faceViolations: 0,
 	})
-
-	const { user } = useAuth();
+	const { videoRef } = useVideo();
 	const [showAnswer, setShowAnswer] = useState(false)
 	const [isAnswerCorrect, setIsAnswerCorrect] = useState(false)
 	const [warningVisible, setWarningVisible] = useState(false)
 	const [showFullscreenWarning, setShowFullscreenWarning] = useState(false)
 	const [autoAdvanceTime, setAutoAdvanceTime] = useState<number | undefined>(undefined)
-
+	const [webcamPermission, setWebcamPermission] = useState<"granted" | "denied" | "prompt" | null>(null)
+	const { user } = useAuth()
+	const socket = useSocket()
 	const timerRef = useRef<NodeJS.Timeout | null>(null)
 	const autoAdvanceRef = useRef<NodeJS.Timeout | null>(null)
 	const questionStartTime = useRef<number>(Date.now())
 	const examContainerRef = useRef<HTMLDivElement>(null)
-	const socket = useSocket();
 	const currentQuestion = examData.questions[examState.currentQuestion]
+
+	// Check webcam permission on mount
+	// useEffect(() => {
+	// 	const checkWebcamPermission = async () => {
+	// 		try {
+	// 			const permissionStatus = await navigator.permissions.query({ name: "camera" as PermissionName })
+	// 			setWebcamPermission(permissionStatus.state)
+	// 			permissionStatus.onchange = () => {
+	// 				setWebcamPermission(permissionStatus.state)
+	// 			}
+	// 		} catch (error) {
+	// 			console.error("Error checking webcam permission:", error)
+	// 			setWebcamPermission("denied")
+	// 		}
+	// 	}
+	// 	checkWebcamPermission()
+	// }, [])
+
+	// Handle face violation detection
+	const handleFaceViolation = useCallback(() => {
+		setExamState((prev) => ({
+			...prev,
+			faceViolations: prev.faceViolations + 1,
+			cheatingAttempts: prev.cheatingAttempts + 1,
+		}))
+
+		if (socket) {
+			socket.emit("student:face-violation", {
+				quizId: examData._id,
+				userId: user?._id,
+				violationType: "face_not_detected",
+				timestamp: new Date().toISOString(),
+				totalViolations: examState.faceViolations + 1,
+				avatar: user?.avatar,
+			})
+		}
+
+		setWarningVisible(true)
+		setTimeout(() => setWarningVisible(false), 3000)
+	}, [socket, examData._id, user?._id, user?.avatar, examState.faceViolations])
 
 	// Fullscreen detection
 	useEffect(() => {
@@ -86,11 +129,10 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 			const isCurrentlyFullscreen = !!document.fullscreenElement
 			setExamState((prev) => ({ ...prev, isFullscreen: isCurrentlyFullscreen }))
 
-			if (examState.examStarted && !examState.examCompleted && !isCurrentlyFullscreen) {
-				setShowFullscreenWarning(true)
-			} else {
-				setShowFullscreenWarning(false)
+			if (examState.examCompleted && videoRef.current?.srcObject) {
+				(videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
 			}
+
 		}
 
 		document.addEventListener("fullscreenchange", handleFullscreenChange)
@@ -106,6 +148,18 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 					tabSwitches: prev.tabSwitches + 1,
 					cheatingAttempts: prev.cheatingAttempts + 1,
 				}))
+
+				if (socket) {
+					socket.emit("student:tab-switch", {
+						quizId: examData._id,
+						userId: user?._id,
+						violationType: "tab_switch",
+						timestamp: new Date().toISOString(),
+						totalViolations: examState.cheatingAttempts + 1,
+						avatar: user?.avatar,
+					})
+				}
+
 				setWarningVisible(true)
 				setTimeout(() => setWarningVisible(false), 3000)
 			}
@@ -118,6 +172,17 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 					...prev,
 					cheatingAttempts: prev.cheatingAttempts + 1,
 				}))
+
+				if (socket) {
+					socket.emit("student:right-click-violation", {
+						quizId: examData._id,
+						userId: user?._id,
+						violationType: "right_click",
+						timestamp: new Date().toISOString(),
+						totalViolations: examState.cheatingAttempts + 1,
+						avatar: user?.avatar,
+					})
+				}
 			}
 		}
 
@@ -137,6 +202,18 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 						...prev,
 						cheatingAttempts: prev.cheatingAttempts + 1,
 					}))
+
+					if (socket) {
+						socket.emit("student:keyboard-violation", {
+							quizId: examData._id,
+							userId: user?._id,
+							violationType: "suspicious_keypress",
+							key: e.key,
+							timestamp: new Date().toISOString(),
+							totalViolations: examState.cheatingAttempts + 1,
+							avatar: user?.avatar,
+						})
+					}
 				}
 			}
 		}
@@ -148,6 +225,17 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 					...prev,
 					cheatingAttempts: prev.cheatingAttempts + 1,
 				}))
+
+				if (socket) {
+					socket.emit("student:copy-violation", {
+						quizId: examData._id,
+						userId: user?._id,
+						violationType: "copy_attempt",
+						timestamp: new Date().toISOString(),
+						totalViolations: examState.cheatingAttempts + 1,
+						avatar: user?.avatar,
+					})
+				}
 			}
 		}
 
@@ -158,6 +246,17 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 					...prev,
 					cheatingAttempts: prev.cheatingAttempts + 1,
 				}))
+
+				if (socket) {
+					socket.emit("student:paste-violation", {
+						quizId: examData._id,
+						userId: user?._id,
+						violationType: "paste_attempt",
+						timestamp: new Date().toISOString(),
+						totalViolations: examState.cheatingAttempts + 1,
+						avatar: user?.avatar,
+					})
+				}
 			}
 		}
 
@@ -174,7 +273,7 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 			document.removeEventListener("copy", handleCopy)
 			document.removeEventListener("paste", handlePaste)
 		}
-	}, [examState.examStarted, examState.examCompleted])
+	}, [examState.examStarted, examState.examCompleted, examState.cheatingAttempts, socket, examData._id, user?._id, user?.avatar])
 
 	// Timer functionality
 	useEffect(() => {
@@ -203,6 +302,30 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 		}
 	}, [autoAdvanceTime])
 
+	// const requestWebcamPermission = async () => {
+	// 	try {
+	// 		console.log("exam started, req webcam");
+
+	// 		const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+	// 		if (videoRef.current) {
+	// 			videoRef.current.srcObject = stream
+	// 			console.log('Webcam stream assigned')
+	// 			setWebcamPermission("granted")
+	// 		}
+	// 		return true
+	// 	} catch (error: any) {
+	// 		console.error("Webcam permission denied or error:", error)
+	// 		if (error.name === 'NotAllowedError') {
+	// 			setWebcamPermission("denied")
+	// 			setWarningVisible(true)
+	// 			setTimeout(() => setWarningVisible(false), 5000)
+	// 		} else {
+	// 			setWebcamPermission("denied")
+	// 		}
+	// 		return false
+	// 	}
+	// }
+
 	const enterFullscreen = async () => {
 		try {
 			if (examContainerRef.current) {
@@ -214,14 +337,38 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 	}
 
 	const startExam = async () => {
-		await enterFullscreen()
+		try {
+			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+			if (videoRef.current) {
+				videoRef.current.srcObject = stream;
+			}
+		} catch (error) {
+			console.error("Webcam permission denied:", error);
+			setWarningVisible(true);
+			return;
+		}
+
+		await new Promise(resolve => setTimeout(resolve, 500));
+		await enterFullscreen();
+
 		setExamState((prev) => ({
 			...prev,
 			examStarted: true,
 			timeLeft: examData.timePerQuestion,
-		}))
-		questionStartTime.current = Date.now()
-	}
+		}));
+
+		questionStartTime.current = Date.now();
+
+		if (socket) {
+			socket.emit("student:exam-started", {
+				quizId: examData._id,
+				userId: user?._id,
+				timestamp: new Date().toISOString(),
+				avatar: user?.avatar,
+			});
+		}
+	};
+
 
 	const handleRadioChange = (value: string) => {
 		if (showAnswer) return
@@ -255,11 +402,23 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 		return points
 	}
 
-	const checkAnswer = () => {
+	const checkAnswer = async () => {
 		let isCorrect = false
 
 		if (currentQuestion.type === "open") {
-			isCorrect = examState.openAnswer.trim().length > 0
+			const response = await fetch("http://localhost:5678/webhook-test/score", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					question: currentQuestion,
+					answer: examState.openAnswer.trim()
+				}),
+			})
+
+			const result = await response.json()
+			isCorrect = result[0].output >= 7
 		} else {
 			const correctOptions = currentQuestion.options.filter((opt) => opt.isCorrect).map((opt) => opt._id)
 			const selectedOptions = examState.selectedAnswers
@@ -274,18 +433,22 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 
 		const timeTaken = Math.floor((Date.now() - questionStartTime.current) / 1000)
 		const questionScore = calculateScore(isCorrect, timeTaken, currentQuestion.type)
-		console.log(user?._id, "--", isCorrect, "--", examData._id);
+
 		if (socket) {
-			//socket.on("student:submit-answer", ({ quizId, userId, isCorrect })
 			socket.emit("student:submit-answer", {
 				quizId: examData._id,
 				userId: user?._id,
-				isCorrect: isCorrect
+				isCorrect: isCorrect,
+				score: questionScore,
+				violations: examState.cheatingAttempts,
+				faceViolations: examState.faceViolations,
+				avatar: user?.avatar,
 			})
 		}
+
 		setIsAnswerCorrect(isCorrect)
 		setShowAnswer(true)
-		setAutoAdvanceTime(2) // Start 2-second countdown
+		setAutoAdvanceTime(2)
 
 		setExamState((prev) => ({
 			...prev,
@@ -306,7 +469,6 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 	}
 
 	const handleNextQuestion = useCallback(() => {
-		// Clear auto advance timer
 		if (autoAdvanceRef.current) {
 			clearTimeout(autoAdvanceRef.current)
 		}
@@ -332,6 +494,19 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 			questionStartTime.current = Date.now()
 		} else {
 			setExamState((prev) => ({ ...prev, examCompleted: true }))
+
+			if (socket) {
+				socket.emit("student:exam-completed", {
+					quizId: examData._id,
+					userId: user?._id,
+					finalScore: examState.score,
+					totalViolations: examState.cheatingAttempts,
+					faceViolations: examState.faceViolations,
+					timestamp: new Date().toISOString(),
+					avatar: user?.avatar,
+				})
+			}
+
 			if (document.exitFullscreen) {
 				document.exitFullscreen()
 			}
@@ -342,9 +517,15 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 		examState.openAnswer,
 		examState.currentQuestion,
 		currentQuestion.type,
+		examState.score,
+		examState.cheatingAttempts,
+		examState.faceViolations,
+		socket,
+		examData._id,
+		user?._id,
+		user?.avatar,
 	])
 
-	// Fullscreen warning overlay
 	if (showFullscreenWarning && examState.examStarted && !examState.examCompleted) {
 		return <FullscreenWarning />
 	}
@@ -352,6 +533,23 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 	if (!examState.examStarted) {
 		return (
 			<div ref={examContainerRef}>
+				<AnimatePresence>
+					{warningVisible && (
+						<motion.div
+							initial={{ opacity: 0, y: -50 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -50 }}
+							className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
+						>
+							<Alert className="bg-red-100 dark:bg-red-900/20 border-red-300 dark:border-red-800 shadow-lg">
+								<Camera className="h-4 w-4 text-red-600 dark:text-red-400" />
+								<AlertDescription className="text-red-800 dark:text-red-200 font-medium">
+									Webcam access is required to start the exam. Please grant camera permission and try again.
+								</AlertDescription>
+							</Alert>
+						</motion.div>
+					)}
+				</AnimatePresence>
 				<ExamIntro
 					title={examData.title}
 					description={examData.description}
@@ -372,6 +570,7 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 				answers={examState.answers}
 				questions={examData.questions}
 				cheatingAttempts={examState.cheatingAttempts}
+				faceViolations={examState.faceViolations}
 				passingCriteria={examData.passingCriteria}
 			/>
 		)
@@ -382,6 +581,13 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 			ref={examContainerRef}
 			className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900"
 		>
+			<FaceDetectionComponent
+				onViolationDetected={handleFaceViolation}
+				examStarted={examState.examStarted}
+				examCompleted={examState.examCompleted}
+				isFullscreen={examState.isFullscreen}
+			/>
+
 			<AnimatePresence>
 				{warningVisible && (
 					<motion.div
@@ -408,6 +614,7 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 					timeLeft={examState.timeLeft}
 					totalTime={examData.timePerQuestion}
 					cheatingAttempts={examState.cheatingAttempts}
+					faceViolations={examState.faceViolations}
 				/>
 
 				<div className="mb-6 sm:mb-8">
