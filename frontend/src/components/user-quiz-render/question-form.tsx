@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { PlusCircle, Trash2 } from "lucide-react"
-import type { QuizData, QuestionData } from "@/types/quiz"
+import type { QuestionData } from "@/types/question"
 import { createQuestion, updateQuestion, deleteQuestion, fetchQuestionById } from "@/api/question"
 
 interface QuestionFormProps {
@@ -18,7 +18,7 @@ interface QuestionFormProps {
     setMessage: React.Dispatch<React.SetStateAction<{ type: 'success' | 'error', text: string } | null>>
 }
 
-const QuestionForm = ({ quizId, questions, setFormData, token, setMessage }: QuestionFormProps) => {
+const QuestionForm = ({ questions, setFormData, token, setMessage }: QuestionFormProps) => {
     const [questionsData, setQuestionsData] = useState<QuestionData[]>([])
     const [questionForm, setQuestionForm] = useState({
         questionText: "",
@@ -100,7 +100,7 @@ const QuestionForm = ({ quizId, questions, setFormData, token, setMessage }: Que
                     questionType: questionForm.questionType,
                     options: questionForm.questionType === "open-ended" ? [] : questionForm.options,
                     multimedia: questionForm.multimedia.url ? questionForm.multimedia : undefined,
-                }, token)
+                })
                 if (!response.error && response.data) {
                     setQuestionsData(questionsData.map(q => q._id === editingQuestionId ? response.data : q))
                     setMessage({ type: 'success', text: 'Question updated' })
@@ -113,7 +113,7 @@ const QuestionForm = ({ quizId, questions, setFormData, token, setMessage }: Que
                     questionType: questionForm.questionType,
                     options: questionForm.questionType === "open-ended" ? [] : questionForm.options,
                     multimedia: questionForm.multimedia.url ? questionForm.multimedia : undefined,
-                }, token)
+                },)
                 if (!response.error && response.data) {
                     setFormData(prev => ({
                         ...prev,
@@ -150,7 +150,7 @@ const QuestionForm = ({ quizId, questions, setFormData, token, setMessage }: Que
             ],
             multimedia: question.multimedia || { type: "image", url: "" },
         })
-        setEditingQuestionId(question._id)
+        setEditingQuestionId(question?._id as string)
         setMessage(null)
     }
 
@@ -160,7 +160,7 @@ const QuestionForm = ({ quizId, questions, setFormData, token, setMessage }: Que
                 setMessage({ type: 'error', text: 'Authentication token missing' })
                 return
             }
-            const response = await deleteQuestion(questionId, token)
+            const response = await deleteQuestion(questionId);
             if (!response.error) {
                 setFormData(prev => ({
                     ...prev,
@@ -364,7 +364,7 @@ const QuestionForm = ({ quizId, questions, setFormData, token, setMessage }: Que
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleDeleteQuestion(question._id)}
+                                        onClick={() => handleDeleteQuestion(question?._id as string)}
                                         className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full"
                                     >
                                         <Trash2 size={16} />

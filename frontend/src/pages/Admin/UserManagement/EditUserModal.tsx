@@ -78,13 +78,12 @@ const EditUserModal = ({ user, isOpen, onClose, onUpdate }: EditUserModalProps) 
         if (!validateForm()) return
 
         // Clean up socialLinks by removing empty strings
-        const cleanedSocialLinks = Object.fromEntries(
-            Object.entries(formData.socialLinks).filter(([_, value]) => value.trim() !== "")
-        )
+        // const cleanedSocialLinks = Object.fromEntries(
+        //     Object.entries(formData.socialLinks).filter(([_, value]) => value.trim() !== "")
+        // )
 
         const updates: Partial<User> = {
-            ...formData,
-            socialLinks: cleanedSocialLinks,
+            ...formData
         }
 
         onUpdate(user._id, updates)

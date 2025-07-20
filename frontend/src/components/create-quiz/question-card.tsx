@@ -188,7 +188,7 @@ export function QuestionCard({ question, index, onUpdate, onDelete, onDuplicate,
 			whileHover={{ scale: 1.01 }}
 			transition={{ duration: 0.2 }}
 		>
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50 hover:shadow-lg transition-shadow duration-200">
+			<Card className="bg-transparent hover:shadow-lg transition-shadow duration-200">
 				<CardHeader className="pb-4">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-3">
@@ -259,7 +259,7 @@ export function QuestionCard({ question, index, onUpdate, onDelete, onDuplicate,
 										value={question.questionText}
 										onChange={(e) => onUpdate({ questionText: e.target.value })}
 										placeholder="Enter your question here..."
-										className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 min-h-[80px]"
+										className="bg-transparent focus:ring-purple-500 focus:border-purple-500 min-h-[80px]"
 									/>
 								</div>
 
@@ -448,7 +448,7 @@ export function QuestionCard({ question, index, onUpdate, onDelete, onDuplicate,
 													initial={{ opacity: 0, x: -20 }}
 													animate={{ opacity: 1, x: 0 }}
 													exit={{ opacity: 0, x: 20 }}
-													className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+													className="flex items-center gap-3 p-3 bg-transparent rounded-lg"
 												>
 													<Switch
 														checked={option.isCorrect}
@@ -459,7 +459,7 @@ export function QuestionCard({ question, index, onUpdate, onDelete, onDuplicate,
 														value={option.text}
 														onChange={(e) => updateOption(optionIndex, { text: e.target.value })}
 														placeholder={`Option ${optionIndex + 1}`}
-														className="flex-1 bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500"
+														className="flex-1 bg-transparent border-gray-300 dark:border-gray-500"
 														disabled={question.questionType === "true-false"}
 													/>
 													{question.questionType !== "true-false" && question.options.length > 2 && (

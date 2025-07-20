@@ -101,7 +101,7 @@ const MonitoringPage = () => {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+		<div className="min-h-screen bg-transparent p-6">
 			<div className="max-w-7xl mx-auto space-y-6">
 				{/* Header */}
 				<motion.div
@@ -114,16 +114,16 @@ const MonitoringPage = () => {
 							<Activity className="w-6 h-6 text-white" />
 						</div>
 						<div>
-							<h1 className="text-3xl font-bold text-gray-900">Live Quiz Monitoring</h1>
-							<p className="text-gray-600">
+							<h1 className="text-3xl font-bold bg-gradient-to-tr from-purple-700 to-blue-700 text-transparent bg-clip-text">Live Quiz Monitoring</h1>
+							<p className="text-foreground/50">
 								Quiz ID: <span className="font-mono font-semibold">{params.quizId}</span>
 							</p>
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
-						<div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-							<Users className="w-4 h-4 text-blue-500" />
-							<span className="text-sm font-medium">{leaderboard.length} Participants</span>
+						<div className="flex items-center  text-blue-500 space-x-2 bg-blue-700/30 px-4 py-2 rounded-lg shadow-sm">
+							<Users className="w-4 h-4" />
+							<span className="text-sm  font-medium">{leaderboard.length} Participants</span>
 						</div>
 						<Button
 							variant="destructive"

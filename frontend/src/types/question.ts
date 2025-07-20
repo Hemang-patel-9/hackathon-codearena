@@ -1,5 +1,5 @@
 export interface QuestionData {
-	_id: string
+	_id?: string
 	questionText: string
 	questionType: "multiple-choice" | "multiple-select" | "true-false" | "open-ended"
 	options: { text: string; isCorrect: boolean }[]

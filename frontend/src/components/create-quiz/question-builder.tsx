@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, HelpCircle, FileText, Download, Upload, Sparkles, X, Tags, Hash } from "lucide-react"
+import { Plus, HelpCircle, FileText, Download, Upload, Sparkles, X, Tags } from "lucide-react"
 import type { QuizData } from "@/types/quiz"
 import type { QuestionData } from "@/types/question"
 import { QuestionCard } from "./question-card"
@@ -23,7 +23,6 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 	const [showCsvOptions, setShowCsvOptions] = useState(false)
 	const [showAiGenerator, setShowAiGenerator] = useState(false)
 	const [aiTags, setAiTags] = useState("")
-	const [aiQuestionCount, setAiQuestionCount] = useState("")
 	const { token } = useAuth()
 
 	const addQuestion = (type: QuestionData["questionType"]) => {
@@ -165,11 +164,10 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 
 			const result = await response.json();
 			console.log("AI-Agent Response:", result.output);
-			updateQuizData({ questions: result.output.data});
+			updateQuizData({ questions: result.output.data });
 
 			setShowAiGenerator(false);
 			setAiTags("");
-			setAiQuestionCount("");
 		} catch (error) {
 			console.error("Error fetching AI questions:", error);
 		}
@@ -184,7 +182,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 			className="space-y-6"
 		>
 			{/* Header */}
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50">
+			<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-100 via-purple-200 to-blue-100">
 				<CardHeader>
 					<CardTitle className="flex items-center justify-between">
 						<div className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white">
@@ -194,7 +192,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 							>
 								<HelpCircle className="w-6 h-6 text-purple-500" />
 							</motion.div>
-							Questions ({quizData.questions?.length?? 0})
+							Questions ({quizData.questions?.length ?? 0})
 						</div>
 						<div className="flex items-center gap-2">
 							<Button

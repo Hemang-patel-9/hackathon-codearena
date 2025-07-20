@@ -23,8 +23,6 @@ interface CustomizationPanelProps {
 }
 
 export default function CustomizationPanel({
-    shirtStyle,
-    setShirtStyle,
     shirtColor,
     setShirtColor,
     pantsStyle,
@@ -41,36 +39,8 @@ export default function CustomizationPanel({
     setFeetColor,
 }: CustomizationPanelProps) {
     const [activeSection, setActiveSection] = useState("shirt")
-    const [shirtTab, setShirtTab] = useState("style")
     const [pantsTab, setPantsTab] = useState("style")
     const [capTab, setCapTab] = useState("style")
-
-    const shirtStyles = [
-        {
-            id: "tshirt",
-            name: "T-Shirt",
-            icon: "👕",
-            description: "Casual cotton tee",
-        },
-        {
-            id: "shirt",
-            name: "Shirt",
-            icon: "👔",
-            description: "Classic button-up",
-        },
-        {
-            id: "hoodie",
-            name: "Hoodie",
-            icon: "🧥",
-            description: "Cozy pullover",
-        },
-        {
-            id: "tank",
-            name: "Tank Top",
-            icon: "🎽",
-            description: "Sleeveless athletic",
-        },
-    ]
 
     const pantsStyles = [
         {
@@ -299,7 +269,7 @@ export default function CustomizationPanel({
                             <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
                                 <CardHeader className="pb-3">
                                     <CardTitle className="text-white text-lg flex items-center gap-2">
-                                        👕 Shirt {shirtTab === "style" ? "Styles" : "Colors"}
+                                    👕 Shirt {"style" === "style" ? "Styles" : "Colors"}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>

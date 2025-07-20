@@ -21,7 +21,7 @@ export const fetchQuestionById = async (questionId: string): Promise<Result> => 
     } catch (error) {
         console.error("Failed to fetch question:", error)
         return {
-            error: error,
+            error: "Failed to fetch question",
             message: error instanceof Error ? error.message : "Network error",
             data: null,
         }
@@ -47,7 +47,7 @@ export const createQuestion = async (question: Partial<QuestionData>): Promise<R
     } catch (error) {
         console.error("Failed to create question:", error)
         return {
-            error: error,
+            error: "Failed to create question",
             message: error instanceof Error ? error.message : "Network error",
             data: undefined,
         }
@@ -73,7 +73,7 @@ export const updateQuestion = async (questionId: string, updates: Partial<Questi
     } catch (error) {
         console.error("Failed to update question:", error)
         return {
-            error: error,
+            error: "Failed to update question",
             message: "Failed to update quiz",
             data: undefined,
         }
@@ -98,7 +98,7 @@ export const deleteQuestion = async (questionId: string): Promise<Result> => {
     } catch (error) {
         console.error("Failed to delete question:", error)
         return {
-            error: error,
+            error: "Failed to delete question",
             message: error instanceof Error ? error.message : "Network error",
             data: undefined,
         }

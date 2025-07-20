@@ -32,6 +32,7 @@ export function CreateQuizPage() {
 		questionOrder: "random",
 		visibility: "public",
 		password: "",
+		status: "upcoming",
 		schedule: new Date(),
 		questions: [],
 	}
@@ -95,12 +96,12 @@ export function CreateQuizPage() {
 	const CurrentStepComponent = steps[currentStep].component
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 transition-colors duration-500">
+		<div className="min-h-screen bg-transparent transition-colors duration-500">
 			{/* Header */}
 			<motion.header
 				initial={{ y: -100, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
-				className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700"
+				className="sticky top-0 z-50 bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-100 via-purple-200 to-blue-100"
 			>
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
 					<div className="flex items-center gap-4">
@@ -116,7 +117,7 @@ export function CreateQuizPage() {
 						<Button
 							variant="outline"
 							onClick={() => setShowPreview(true)}
-							className="hover:scale-105 transition-transform duration-200"
+							className="hover:scale-105 hover:bg-purple-700 transition-transform duration-200"
 						>
 							<Eye className="w-4 h-4 mr-2" />
 							Preview
