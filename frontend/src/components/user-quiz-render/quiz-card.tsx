@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { motion, AnimatePresence } from "framer-motion"
 import { CalendarDays, Timer, ListChecks, Clock, User, Dot, Info, Play, BookOpen } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 interface QuizCardProps {
     quiz: Quiz
-    onJoin?: (quizId: string) => void
 }
 
-const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
+const QuizCard: React.FC<QuizCardProps> = ({ quiz }) => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false)
 
     const formatDate = (dateString: string) => {
@@ -25,9 +26,11 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
         })
     }
 
-    const handleJoin = () => {
-        if (onJoin && quiz._id) {
-            onJoin(quiz._id)
+    const handleJoin = (id: string) => {
+        console.log("--");
+        if (id) {
+            console.log("--");
+            navigate(`/start/${id}`);
         }
     }
     const [imageError, setImageError] = useState(false)
@@ -65,39 +68,39 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
                     <CardContent className="relative z-10 p-0">
                         {/* Quiz Image */}
                         {showImage ? (
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.1 }}
-                            className="w-full h-48 overflow-hidden"
-                        >
-                            <img
-                                src={`${import.meta.env.VITE_APP_API_URL}/${quiz.thumbnail}`}
-                                alt={quiz.title}
-                                onError={() => setImageError(true)}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                        </motion.div>
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.1 }}
+                                className="w-full h-48 overflow-hidden"
+                            >
+                                <img
+                                    src={`${import.meta.env.VITE_APP_API_URL}/${quiz.thumbnail}`}
+                                    alt={quiz.title}
+                                    onError={() => setImageError(true)}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                            </motion.div>
                         ) : (
-                        <div className="h-48 w-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 relative overflow-hidden">
-                            {/* Animated Background Pattern */}
-                            <div className="absolute inset-0 opacity-20">
-                                <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16 animate-pulse"></div>
-                                <div className="absolute top-1/2 right-0 w-24 h-24 bg-white rounded-full translate-x-12 animate-bounce"></div>
-                                <div className="absolute bottom-0 left-1/3 w-20 h-20 bg-white rounded-full translate-y-10 animate-pulse delay-300"></div>
-                            </div>
-
-                            {/* Floating Animation */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="relative">
-                                    <BookOpen className="w-16 h-16 text-white/90 animate-bounce" />
-                                    <div className="absolute -inset-4 bg-white/10 rounded-full animate-ping"></div>
+                            <div className="h-48 w-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 relative overflow-hidden">
+                                {/* Animated Background Pattern */}
+                                <div className="absolute inset-0 opacity-20">
+                                    <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16 animate-pulse"></div>
+                                    <div className="absolute top-1/2 right-0 w-24 h-24 bg-white rounded-full translate-x-12 animate-bounce"></div>
+                                    <div className="absolute bottom-0 left-1/3 w-20 h-20 bg-white rounded-full translate-y-10 animate-pulse delay-300"></div>
                                 </div>
-                            </div>
 
-                            {/* Gradient Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        </div>
+                                {/* Floating Animation */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="relative">
+                                        <BookOpen className="w-16 h-16 text-white/90 animate-bounce" />
+                                        <div className="absolute -inset-4 bg-white/10 rounded-full animate-ping"></div>
+                                    </div>
+                                </div>
+
+                                {/* Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                            </div>
                         )}
 
                         <div className="p-6">
@@ -143,8 +146,8 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
                                 </Dialog>
 
                                 <Button
-                                    onClick={handleJoin}
-                                    disabled={!onJoin || !quiz._id}
+                                    onClick={() => { handleJoin(quiz._id) }}
+                                    disabled={!quiz._id}
                                     className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                                 >
                                     <Play className="w-4 h-4 mr-2" />
@@ -276,8 +279,8 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onJoin }) => {
                                 {/* Action Button */}
                                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
                                     <Button
-                                        onClick={handleJoin}
-                                        disabled={!onJoin || !quiz._id}
+                                        onClick={() => { handleJoin(quiz?._id)}}
+                                        disabled={!quiz?._id}
                                         className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-3 text-lg font-semibold"
                                     >
                                         <Play className="w-5 h-5 mr-2" />
