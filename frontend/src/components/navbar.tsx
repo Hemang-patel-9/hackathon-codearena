@@ -100,45 +100,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 
 				{/* Right Section */}
 				<div className="flex items-center space-x-2">
-					{/* Notifications */}
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="relative hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-blue-500/10 transition-all duration-200"
-							>
-								<Bell className="h-5 w-5" />
-								<motion.span
-									initial={{ scale: 0 }}
-									animate={{ scale: 1 }}
-									className="absolute -top-1 -right-1 h-3 w-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full text-xs flex items-center justify-center text-white"
-								>
-									3
-								</motion.span>
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-80 bg-background border-border">
-							<DropdownMenuItem className="hover:bg-gradient-to-r hover:from-purple-500/5 hover:to-blue-500/5">
-								<div className="flex flex-col space-y-1">
-									<p className="text-sm font-medium text-foreground">New project assigned</p>
-									<p className="text-xs text-muted-foreground">2 minutes ago</p>
-								</div>
-							</DropdownMenuItem>
-							<DropdownMenuItem className="hover:bg-gradient-to-r hover:from-purple-500/5 hover:to-blue-500/5">
-								<div className="flex flex-col space-y-1">
-									<p className="text-sm font-medium text-foreground">Invoice payment received</p>
-									<p className="text-xs text-muted-foreground">1 hour ago</p>
-								</div>
-							</DropdownMenuItem>
-							<DropdownMenuItem className="hover:bg-gradient-to-r hover:from-purple-500/5 hover:to-blue-500/5">
-								<div className="flex flex-col space-y-1">
-									<p className="text-sm font-medium text-foreground">Client meeting scheduled</p>
-									<p className="text-xs text-muted-foreground">3 hours ago</p>
-								</div>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
 
 					{/* Theme Toggle */}
 					<Button

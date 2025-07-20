@@ -101,9 +101,9 @@ export function CreateQuizPage() {
 			<motion.header
 				initial={{ y: -100, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
-				className="sticky top-0 z-50 bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-100 via-purple-200 to-blue-100"
+				className="sticky top-0 z-50 bg-background"
 			>
-				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
+				<div className="container border-b border-foreground/60 mx-auto px-4 py-6 flex items-center justify-between">
 					<div className="flex items-center gap-4">
 						{/* <Button variant="ghost" size="sm" className="hover:scale-105 transition-transform duration-200">
 							<ArrowLeft className="w-4 h-4 mr-2" />
