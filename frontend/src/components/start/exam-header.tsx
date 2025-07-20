@@ -12,9 +12,11 @@ interface ExamHeaderProps {
 	timeLeft: number
 	totalTime: number
 	cheatingAttempts: number
+	faceViolations: number
 }
 
 export function ExamHeader({
+	faceViolations,
 	currentQuestion,
 	totalQuestions,
 	score,
@@ -22,6 +24,8 @@ export function ExamHeader({
 	totalTime,
 	cheatingAttempts,
 }: ExamHeaderProps) {
+	// console.log(faceViolations);
+	
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: -20 }}

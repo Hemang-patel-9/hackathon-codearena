@@ -33,13 +33,16 @@ interface ExamResultsProps {
 	questions: Question[]
 	cheatingAttempts: number
 	passingCriteria: number
+	faceViolations: number
 }
 
-export function ExamResults({ score, answers, questions, cheatingAttempts, passingCriteria }: ExamResultsProps) {
+export function ExamResults({ faceViolations, score, answers, questions, cheatingAttempts, passingCriteria }: ExamResultsProps) {
 	const correctAnswers = answers.filter((a) => a.isCorrect).length
 	const totalQuestions = questions.length
 	const percentage = Math.round((correctAnswers / totalQuestions) * 100)
 	const passed = percentage >= passingCriteria
+	console.log(faceViolations);
+	
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-green-900 dark:to-emerald-900 p-4">
