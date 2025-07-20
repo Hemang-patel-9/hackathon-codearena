@@ -57,7 +57,7 @@ export function QuestionTypeSelector({ onSelect, onClose }: QuestionTypeSelector
 				onClick={(e) => e.stopPropagation()}
 				className="w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl"
 			>
-				<Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-2xl">
+				<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-100 via-purple-200 to-blue-100 shadow-2xl">
 					<CardContent className="p-4 sm:p-5 md:p-6">
 						{/* Header */}
 						<div className="flex items-center justify-between mb-4 sm:mb-5 md:mb-6">

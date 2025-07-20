@@ -81,9 +81,9 @@ export default function CharacterCustomizer() {
                     <directionalLight position={[5, 2, 5]} intensity={0.3} color="#06b6d4" />
 
                     {/* Ground Plane for Shadows */}
-                    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]} receiveShadow>
-                        <planeGeometry args={[10, 10]} />
-                        <meshStandardMaterial color="#1e293b" transparent opacity={0.8} />
+                    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.2, 0]} receiveShadow>
+                        <circleGeometry args={[1.5, 64]} /> {/* Changed to circleGeometry with radius 5 and 64 segments */}
+                        <meshStandardMaterial color="#a020f0" transparent opacity={0.8} />
                     </mesh>
 
                     <Character {...characterProps} />

@@ -113,7 +113,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 			</AnimatePresence>
 
 			{/* Basic Settings */}
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50">
+			<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-50 via-purple-50 to-blue-50 backdrop-blur-sm">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white">
 						<motion.div
@@ -136,7 +136,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 							value={quizData.title}
 							onChange={(e) => updateQuizData({ title: e.target.value })}
 							placeholder="Enter quiz title..."
-							className={`mt-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 ${getFieldError("title") ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+							className={`mt-1 border-purple-300 dark:border-purple-900 bg-background/30 focus:ring-purple-500 focus:border-purple-500 ${getFieldError("title") ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
 								}`}
 						/>
 						{getFieldError("title") && (
@@ -155,7 +155,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 							type="number"
 							value={quizData.NoOfQuestion}
 							onChange={(e) => updateQuizData({ NoOfQuestion: Number(e.target.value) })}
-							className={`mt-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0 ${getFieldError("NoOfQuestion") ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+							className={`mt-1  border-purple-300 dark:border-purple-900 bg-background/30 focus:ring-purple-500 focus:border-purple-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0 ${getFieldError("NoOfQuestion") ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
 								}`}
 							style={{ MozAppearance: "textfield" }}
 							min="1"
@@ -176,7 +176,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 							type="number"
 							value={quizData.duration}
 							onChange={(e) => updateQuizData({ duration: Number(e.target.value) })}
-							className={`mt-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0 ${getFieldError("duration") ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+							className={`mt-1  border-purple-300 dark:border-purple-900 bg-background/30 focus:ring-purple-500 focus:border-purple-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0 ${getFieldError("duration") ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
 								}`}
 							style={{ MozAppearance: "textfield" }}
 							min="1"
@@ -191,7 +191,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 			</Card>
 
 			{/* Timing Settings */}
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50">
+			<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-50 via-purple-50 to-blue-50 backdrop-blur-sm">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white">
 						<motion.div
@@ -233,7 +233,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 							type="datetime-local"
 							value={quizData.schedule.toISOString().slice(0, 16)}
 							onChange={(e) => updateQuizData({ schedule: new Date(e.target.value) })}
-							className="mt-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500"
+							className="mt-1  border-purple-300 dark:border-purple-900 bg-background/30 focus:ring-purple-500 focus:border-purple-500"
 							disabled={!isRequiredFieldsFilled()}
 						/>
 					</motion.div>
@@ -241,7 +241,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 			</Card>
 
 			{/* Quiz Behavior */}
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50">
+			<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-50 via-purple-50 to-blue-50 backdrop-blur-sm">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white">
 						<motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}>
@@ -278,7 +278,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 							onValueChange={(value: "random" | "fixed") => updateQuizData({ questionOrder: value })}
 							disabled={!isRequiredFieldsFilled()}
 						>
-							<SelectTrigger className="mt-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
+							<SelectTrigger className="mt-1  border-purple-300 dark:border-purple-900 bg-background/30">
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
@@ -301,7 +301,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 			</Card>
 
 			{/* Privacy Settings */}
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50">
+			<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-50 via-purple-50 to-blue-50">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white">
 						<motion.div
@@ -323,7 +323,7 @@ export function QuizSettings({ quizData, updateQuizData }: QuizSettingsProps) {
 							}
 							disabled={!isRequiredFieldsFilled()}
 						>
-							<SelectTrigger className="mt-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
+							<SelectTrigger className="mt-1  border-purple-300 dark:border-purple-900 bg-background/30">
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>

@@ -66,7 +66,7 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
     // Calculate totalQuizzes and averageScore from recentQuizzes
     const totalQuizzes = user.recentQuizzes?.length || 0
     const averageScore = user.recentQuizzes && user.recentQuizzes.length > 0
-        ? user.recentQuizzes.reduce((sum, quiz:any) => sum + (quiz.score?.score || 0), 0) / user.recentQuizzes.length
+        ? user.recentQuizzes.reduce((sum, quiz: any) => sum + (quiz.score?.score || 0), 0) / user.recentQuizzes.length
         : 0
 
     return (
@@ -112,7 +112,7 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
                                 <div className="flex items-center space-x-4 p-6 bg-background dark:bg-gradient-to-tr from-purple-900/20 to-blue-900/20 dark:border-0 border border-purple-300 rounded-xl">
                                     <motion.img
                                         whileHover={{ scale: 1.1 }}
-                                        src={user.avatar || "/placeholder.svg?height=80&width=80"}
+                                        src={`${import.meta.env.VITE_APP_API_URL}/${user.avatar}` || "/placeholder.svg?height=80&width=80"}
                                         alt={user.username}
                                         className="w-20 h-20 rounded-full border-4 border-purple-200"
                                     />
@@ -181,7 +181,7 @@ const UserDetailsModal = ({ user, isOpen, onClose }: UserDetailsModalProps) => {
                                     </h4>
                                     <div className="space-y-3">
                                         {user.recentQuizzes && user.recentQuizzes.length > 0 ? (
-                                            user.recentQuizzes.map((quiz:any, index) => (
+                                            user.recentQuizzes.map((quiz: any, index) => (
                                                 <motion.div
                                                     key={index}
                                                     initial={{ opacity: 0, y: 10 }}

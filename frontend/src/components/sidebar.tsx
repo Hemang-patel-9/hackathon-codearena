@@ -116,7 +116,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
 									className={cn(
 										"relative flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-300 z-10",
 										isActive
-											? "bg-primary text-primary-foreground shadow-lg"
+											? "bg-gradient-to-r from-purple-700 to-blue-700 text-primary-foreground shadow-lg"
 											: "text-muted-foreground hover:text-foreground",
 										!isExpanded && "justify-center",
 									)}

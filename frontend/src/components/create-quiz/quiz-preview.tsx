@@ -17,7 +17,7 @@ export function QuizPreview({ quizData, onClose }: QuizPreviewProps) {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
-			className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+			className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4"
 			onClick={onClose}
 		>
 			<motion.div
@@ -27,14 +27,14 @@ export function QuizPreview({ quizData, onClose }: QuizPreviewProps) {
 				onClick={(e) => e.stopPropagation()}
 				className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
 			>
-				<Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+				<Card className="bg-gradient-to-tr dark:from-blue-900 dark:via-purple-900 dark:to-blue-900 from-blue-100 via-purple-200 to-blue-100 dark:border-gray-700">
 					<CardHeader className="border-b border-gray-200 dark:border-gray-700">
 						<div className="flex items-center justify-between">
 							<CardTitle className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
 								<Eye className="w-6 h-6 text-purple-500" />
 								Quiz Preview
 							</CardTitle>
-							<Button variant="ghost" size="sm" onClick={onClose}>
+							<Button className="hover:bg-purple-700" variant="ghost" size="sm" onClick={onClose}>
 								<X className="w-4 h-4" />
 							</Button>
 						</div>
@@ -49,7 +49,7 @@ export function QuizPreview({ quizData, onClose }: QuizPreviewProps) {
 							className="text-center space-y-4"
 						>
 							{quizData.thumbnail && (
-								<div className="w-32 h-32 mx-auto rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+								<div className="w-32 h-32 mx-auto rounded-lg overflow-hidden border  border-purple-300 dark:border-purple-900">
 									<img
 										src={quizData.thumbnail || "/placeholder.svg"}
 										alt="Quiz thumbnail"
@@ -70,42 +70,42 @@ export function QuizPreview({ quizData, onClose }: QuizPreviewProps) {
 							transition={{ delay: 0.2 }}
 							className="grid grid-cols-2 md:grid-cols-4 gap-4"
 						>
-							<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+							<div className="text-center p-4 border border-purple-700 rounded-lg">
 								<div className="flex items-center justify-center w-8 h-8 bg-blue-500 rounded-full mx-auto mb-2">
 									<Users className="w-4 h-4 text-white" />
 								</div>
 								<div className="text-sm text-gray-600 dark:text-gray-400">Total Questions</div>
 								<div className="text-xl font-bold text-gray-900 dark:text-white">{quizData.questions.length}</div>
 							</div>
-							<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+							<div className="text-center p-4 border border-purple-700 rounded-lg">
 								<div className="flex items-center justify-center w-8 h-8 bg-amber-900 rounded-full mx-auto mb-2">
 									<ShieldQuestionIcon className="w-4 h-4 text-white" />
 								</div>
 								<div className="text-sm text-gray-600 dark:text-gray-400">Display Questions</div>
 								<div className="text-xl font-bold text-gray-900 dark:text-white">{quizData.NoOfQuestion}</div>
 							</div>
-							<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+							<div className="text-center p-4 border border-purple-700 rounded-lg">
 								<div className="flex items-center justify-center w-8 h-8 bg-green-500 rounded-full mx-auto mb-2">
 									<Clock className="w-4 h-4 text-white" />
 								</div>
 								<div className="text-sm text-gray-600 dark:text-gray-400">Time/Question</div>
 								<div className="text-xl font-bold text-gray-900 dark:text-white">{quizData.timePerQuestion}s</div>
 							</div>
-							<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+							<div className="text-center p-4 border border-purple-700 rounded-lg">
 								<div className="flex items-center justify-center w-8 h-8 bg-teal-700 rounded-full mx-auto mb-2">
 									<Timer className="w-4 h-4 text-white" />
 								</div>
 								<div className="text-sm text-gray-600 dark:text-gray-400">Total Duration</div>
 								<div className="text-xl font-bold text-gray-900 dark:text-white">{quizData.duration} minutes</div>
 							</div>
-							<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+							<div className="text-center p-4 border border-purple-700 rounded-lg">
 								<div className="flex items-center justify-center w-8 h-8 bg-purple-500 rounded-full mx-auto mb-2">
 									<Target className="w-4 h-4 text-white" />
 								</div>
 								<div className="text-sm text-gray-600 dark:text-gray-400">Passing Score</div>
 								<div className="text-xl font-bold text-gray-900 dark:text-white">{quizData.passingCriteria}%</div>
 							</div>
-							<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+							<div className="text-center p-4 border border-purple-700 rounded-lg">
 								<div className="flex items-center justify-center w-8 h-8 bg-orange-500 rounded-full mx-auto mb-2">
 									<Calendar className="w-4 h-4 text-white" />
 								</div>
@@ -161,7 +161,7 @@ export function QuizPreview({ quizData, onClose }: QuizPreviewProps) {
 											initial={{ x: -20, opacity: 0 }}
 											animate={{ x: 0, opacity: 1 }}
 											transition={{ delay: index * 0.1 }}
-											className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600"
+											className="p-4 border border-purple-700 rounded-lg"
 										>
 											<div className="flex items-start gap-3">
 												<div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-semibold">
@@ -187,8 +187,8 @@ export function QuizPreview({ quizData, onClose }: QuizPreviewProps) {
 																<div
 																	key={optionIndex}
 																	className={`text-xs p-2 rounded ${option.isCorrect
-																			? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-																			: "bg-gray-100 dark:bg-gray-600/50 text-gray-600 dark:text-gray-400"
+																		? "bg-green-700/40 text-green-700 dark:text-green-300"
+																		: "bg-red-700/40 text-red-700 dark:text-gray-400"
 																		}`}
 																>
 																	{option.isCorrect && "✓ "}

@@ -141,7 +141,7 @@ export function QuizBasicInfo({ quizData, updateQuizData }: QuizBasicInfoProps) 
 			transition={{ duration: 0.5 }}
 			className="space-y-6"
 		>
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50">
+			<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-50 via-purple-50 to-blue-50 border-white/20 dark:border-gray-700/50">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white">
 						<motion.div
@@ -167,7 +167,7 @@ export function QuizBasicInfo({ quizData, updateQuizData }: QuizBasicInfoProps) 
 							value={quizData.title}
 							onChange={(e) => updateQuizData({ title: e.target.value })}
 							placeholder="Enter an engaging quiz title..."
-							className="mt-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500"
+							className="mt-1 bg-transparent border-purple-300 dark:border-purple-900 focus:ring-purple-500 focus:border-purple-500"
 							maxLength={100}
 						/>
 						<div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -189,7 +189,7 @@ export function QuizBasicInfo({ quizData, updateQuizData }: QuizBasicInfoProps) 
 							value={quizData.description}
 							onChange={(e) => updateQuizData({ description: e.target.value })}
 							placeholder="Describe what this quiz is about..."
-							className="mt-1 resize-none bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 min-h-[100px]"
+							className="mt-1 resize-none bg-transparent border-purple-300 dark:border-purple-900 focus:ring-purple-500 focus:border-purple-500 min-h-[100px]"
 							maxLength={500}
 						/>
 						<div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
@@ -220,7 +220,7 @@ export function QuizBasicInfo({ quizData, updateQuizData }: QuizBasicInfoProps) 
 									onChange={(e) => setNewTag(e.target.value)}
 									onKeyPress={handleKeyPress}
 									placeholder="Add a tag..."
-									className="flex-1 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500"
+									className="flex-1 border border-purple-300 dark:border-purple-900 focus:ring-purple-500 focus:border-purple-500"
 								/>
 								<Button
 									type="button"

@@ -164,7 +164,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 
 			const result = await response.json();
 			console.log("AI-Agent Response:", result.output);
-			updateQuizData({ questions: result.output.data});
+			updateQuizData({ questions: result.output.data });
 
 			setShowAiGenerator(false);
 			setAiTags("");
@@ -182,7 +182,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 			className="space-y-6"
 		>
 			{/* Header */}
-			<Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/20 dark:border-gray-700/50">
+			<Card className="bg-gradient-to-tr dark:from-blue-900/20 dark:via-purple-900/20 dark:to-blue-900/20 from-blue-100 via-purple-200 to-blue-100">
 				<CardHeader>
 					<CardTitle className="flex items-center justify-between">
 						<div className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white">
@@ -192,7 +192,7 @@ export function QuestionBuilder({ quizData, updateQuizData }: QuestionBuilderPro
 							>
 								<HelpCircle className="w-6 h-6 text-purple-500" />
 							</motion.div>
-							Questions ({quizData.questions?.length?? 0})
+							Questions ({quizData.questions?.length ?? 0})
 						</div>
 						<div className="flex items-center gap-2">
 							<Button
