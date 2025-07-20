@@ -3,7 +3,7 @@ import React, { createContext, useContext, useRef } from 'react';
 const VideoContext = createContext<{ videoRef: React.RefObject<HTMLVideoElement> } | null>(null);
 
 export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const videoRef:any = useRef<HTMLVideoElement>(null);
     return <VideoContext.Provider value={{ videoRef }}>{children}</VideoContext.Provider>;
 };
 

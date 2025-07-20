@@ -72,9 +72,8 @@ export default function ExamComponent({ examData }: { examData: { _id: string, t
 	const [showAnswer, setShowAnswer] = useState(false)
 	const [isAnswerCorrect, setIsAnswerCorrect] = useState(false)
 	const [warningVisible, setWarningVisible] = useState(false)
-	const [showFullscreenWarning, setShowFullscreenWarning] = useState(false)
+	const showFullscreenWarning = false
 	const [autoAdvanceTime, setAutoAdvanceTime] = useState<number | undefined>(undefined)
-	const [webcamPermission, setWebcamPermission] = useState<"granted" | "denied" | "prompt" | null>(null)
 	const { user } = useAuth()
 	const socket = useSocket()
 	const timerRef = useRef<NodeJS.Timeout | null>(null)

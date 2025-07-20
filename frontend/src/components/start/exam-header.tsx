@@ -16,7 +16,6 @@ interface ExamHeaderProps {
 }
 
 export function ExamHeader({
-	faceViolations,
 	currentQuestion,
 	totalQuestions,
 	score,
