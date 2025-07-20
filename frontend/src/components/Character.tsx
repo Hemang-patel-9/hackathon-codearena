@@ -3,7 +3,7 @@
 import { useRef, useMemo } from "react"
 import { useFrame, useLoader } from "@react-three/fiber"
 import { TextureLoader, type Group } from "three"
-import { FacemeshEyeDefaults, useTexture } from "@react-three/drei"
+import { Capsule, FacemeshEyeDefaults, useTexture } from "@react-three/drei"
 
 interface CharacterProps {
     shirtStyle: string
@@ -80,22 +80,41 @@ export default function Character({
             <Shirt style={shirtStyle} color={shirtColor} />
 
             {/* Arms */}
-            <mesh position={[-0.21, 0.94, 0]} rotation={[0, 0, -0.2]} castShadow>
-                <cylinderGeometry args={[0.06, 0.06, 0.5]} />
-                <meshStandardMaterial color={skinColor} />
-            </mesh>
-            <mesh position={[0.21, 0.94, 0]} rotation={[0, 0, 0.2]} castShadow>
-                <cylinderGeometry args={[0.06, 0.06, 0.5]} />
-                <meshStandardMaterial color={skinColor} />
-            </mesh>
+            <group position={[-0.25, 0.92, 0]}>
+                <mesh rotation={[0, 0, -0.5]} castShadow>
+                    <cylinderGeometry args={[0.06, 0.04, 0.5]} />
+                    <meshStandardMaterial color={skinColor} />
+                </mesh>
+                <mesh position={[0.105, 0.21, 0]} rotation={[0, 0, -0.5]}>
+                    <Capsule
+                        args={[0.05, 0.05, 15, 32]} // [radius, length, capSegments, radialSegments]
+                        castShadow
+                    >
+                        <meshStandardMaterial color={skinColor} />
+                    </Capsule>
+                </mesh>
+            </group>
+            <group position={[0.25, 0.92, 0]}>
+                <mesh rotation={[0, 0, 0.5]} castShadow>
+                    <cylinderGeometry args={[0.06, 0.04, 0.5]} />
+                    <meshStandardMaterial color={skinColor} />
+                </mesh>
+                <mesh position={[-0.105, 0.21, 0]} rotation={[0, 0, 0.5]}>
+                    <Capsule
+                        args={[0.05, 0.05, 15, 32]} // [radius, length, capSegments, radialSegments]
+                        castShadow
+                    >
+                        <meshStandardMaterial color={skinColor} />
+                    </Capsule>
+                </mesh>
+            </group>
 
             {/* hands */}
-
-            <mesh position={[-0.26, 0.7, 0]} castShadow>
+            <mesh position={[-0.37, 0.7, 0]} castShadow>
                 <sphereGeometry args={[0.08, 32, 32]} />
                 <meshStandardMaterial color={skinColor} />
             </mesh>
-            <mesh position={[0.26, 0.7, 0]} castShadow>
+            <mesh position={[0.37, 0.7, 0]} castShadow>
                 <sphereGeometry args={[0.08, 32, 32]} />
                 <meshStandardMaterial color={skinColor} />
             </mesh>
@@ -129,11 +148,22 @@ function Shirt({ style, color }: { style: string; color: string }) {
     switch (style) {
         case "tshirt":
             return (
-                <mesh position={[0, 1, 0]} castShadow>
-                    <cylinderGeometry args={[0.22, 0.18, 0.45]} />
-                    <meshStandardMaterial
-                        roughness={10} color={color} />
-                </mesh>
+
+                <group position={[0, 1, 0]}>
+                    <mesh castShadow>
+                        <Capsule
+                            args={[0.2, 0.09, 15, 32]} // [radius, length, capSegments, radialSegments]
+                            castShadow
+                        >
+                            <meshStandardMaterial color={color} />
+                        </Capsule>
+                    </mesh>
+                    <mesh position={[0, -0.1, 0]} castShadow>
+                        <cylinderGeometry args={[0.2, 0.2, 0.2]} />
+                        <meshStandardMaterial
+                            roughness={10} color={color} />
+                    </mesh>
+                </group>
             )
         case "shirt":
             return (
