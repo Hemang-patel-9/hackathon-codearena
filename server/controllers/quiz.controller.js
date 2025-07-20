@@ -5,6 +5,7 @@ const Question = require('../models/question.model');
 const Scoreboard = require('../models/score.model');
 const mongoose = require('mongoose');
 const scoreModel = require('../models/score.model');
+const checkToxic = require('../helpers/toxicity.helper')
 
 // @route   POST /api/quizzes
 const createQuiz = async (req, res) => {
@@ -36,6 +37,27 @@ const createQuiz = async (req, res) => {
             return res.status(400).json({ error: "Invalid creator ID format.", data: null, message: 'Invalid creator ID format.' });
         }
 
+        for (const question of questions) {
+            try {
+                const isToxic = await checkToxic.detectToxicity(question.questionText);
+                console.log(question.questionText)
+                if (isToxic) {
+                    const joiner = [question.questionText, "contains toxic content. Please remove or change it."];
+                    return res.status(400).json({
+                        error: joiner.join(" "),
+                        data: null,
+                        message: "Please enter appropriate questions."
+                    });
+                }
+            } catch (err) {
+                return res.status(500).json({
+                    error: "Internal toxicity check error.",
+                    data: null,
+                    message: err.message
+                });
+            }
+        }
+
         if (questions && questions.length > 0) {
             const insertedQuestions = await Question.insertMany(questions);
             questions = insertedQuestions.map(q => q._id);
@@ -50,6 +72,7 @@ const createQuiz = async (req, res) => {
         } else if (visibility !== 'password-protected' && password) {
             password = undefined;
         }
+
 
         const newQuiz = new Quiz({
             creator,
